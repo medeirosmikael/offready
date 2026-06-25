@@ -2888,7 +2888,7 @@ function generatePostOperationReport(){
     // 6. Ações
     +'<div class="sec">A\u00e7\u00f5es Tomadas</div>'
     +'<table><thead><tr style="background:#f5f5f5"><th style="padding:6px 8px;text-align:left;width:140px">\u00c1rea</th><th style="padding:6px 8px;text-align:left">A\u00e7\u00e3o</th></tr></thead><tbody>'
-    +(POSTOPS_AREAS.map(function(a){var v=getpo("pa-"+a.key+"-acao");return v?'<tr style="border-bottom:1px solid #eee"><td style="padding:6px 8px;font-weight:600">'+a.label+'</td><td style="padding:6px 8px">'+v+'</td></tr>':'';}).join('')||'<tr><td colspan="2" style="padding:8px;color:#888">Nenhuma a\u00e7\u00e3o registrada.</td></tr>')
+    +(areaKeys.map(function(k){var sv=savedReports[k];var v=sv&&sv.acao?sv.acao:'';return v?'<tr style="border-bottom:1px solid #eee"><td style="padding:6px 8px;font-weight:600">'+AREA_REPORTS[k].nome+'</td><td style="padding:6px 8px">'+v+'</td></tr>':'';}).join('')||'<tr><td colspan="2" style="padding:8px;color:#888">Nenhuma a\u00e7\u00e3o registrada.</td></tr>')
     +'</tbody></table>'
 
     // 7. Pendências
@@ -3352,13 +3352,57 @@ var AREA_REPORTS = {
   ccr:       {nome:"CCR / Opera\u00e7\u00e3o",resp:"Carlos Ribeiro", status:"pend",  upd:"30/09/2026",icon:"ti-radio",        col:"rgba(240,64,80,.1)",  icol:"var(--r)"}
 };
 
+// ══ AREA REPORTS — localStorage ══
+var LS_KEY = "OFFREADY_AREA_REPORTS";
+
+function saveAreaReport(key, data){
+  try{
+    var all = getSavedAreaReports();
+    all[key] = data;
+    localStorage.setItem(LS_KEY, JSON.stringify(all));
+    return true;
+  }catch(e){return false;}
+}
+
+function getSavedAreaReports(){
+  try{
+    var raw = localStorage.getItem(LS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){return {};}
+}
+
+function getSavedAreaReport(key){
+  return getSavedAreaReports()[key] || null;
+}
+
+function updateAreaReportCards(){
+  renderAreaReportCards();
+}
+
 function renderAreaReportCards(){
   var el=document.getElementById("area-report-cards");
   if(!el)return;
-  var stMap={done:{bdg:"bg",txt:"Conclu\u00eddo"},prog:{bdg:"ba",txt:"Em preenchimento"},pend:{bdg:"bgr",txt:"Pendente"}};
+  var saved=getSavedAreaReports();
+  var stMap={
+    done:{bdg:"bg",txt:"Conclu\u00eddo"},
+    prog:{bdg:"ba",txt:"Em preenchimento"},
+    pend:{bdg:"bgr",txt:"Pendente"}
+  };
   el.innerHTML=Object.keys(AREA_REPORTS).map(function(k){
     var a=AREA_REPORTS[k];
-    var s=stMap[a.status]||stMap.pend;
+    var sv=saved[k];
+    // Status from saved data
+    var stKey="pend";
+    var resp=a.resp;
+    var upd=a.upd;
+    if(sv){
+      if(sv.status==="Conclu\u00eddo")stKey="done";
+      else if(sv.status==="Em preenchimento")stKey="prog";
+      else stKey="pend";
+      if(sv.responsavel)resp=sv.responsavel;
+      if(sv.savedAt)upd=sv.savedAt;
+    }
+    var s=stMap[stKey];
     return '<div class="area-report-card">'
       +'<div class="area-report-top">'
         +'<div class="area-report-icon" style="background:'+a.col+';color:'+a.icol+'"><i class="ti '+a.icon+'"></i></div>'
@@ -3366,8 +3410,8 @@ function renderAreaReportCards(){
         +'<span class="bdg '+s.bdg+'" style="flex-shrink:0">'+s.txt+'</span>'
       +'</div>'
       +'<div class="area-report-meta">'
-        +'<div class="area-report-meta-row"><span class="area-report-meta-lbl">Resp.</span><span>'+a.resp+'</span></div>'
-        +'<div class="area-report-meta-row"><span class="area-report-meta-lbl">Upd.</span><span>'+a.upd+'</span></div>'
+        +'<div class="area-report-meta-row"><span class="area-report-meta-lbl">Resp.</span><span>'+resp+'</span></div>'
+        +'<div class="area-report-meta-row"><span class="area-report-meta-lbl">Upd.</span><span>'+upd+'</span></div>'
       +'</div>'
       +'<button class="area-report-btn" onclick="openAreaReportForm(\''+k+'\')"><i class="ti ti-external-link" style="font-size:11px"></i>Abrir Formul\u00e1rio</button>'
     +'</div>';
@@ -3381,25 +3425,30 @@ function openAreaReportForm(key){
   var dateStr=now.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});
   var timeStr=now.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
   var stOpts=["Pendente","Em preenchimento","Conclu\u00eddo"];
-  var stSel=a.status==="done"?"Conclu\u00eddo":a.status==="prog"?"Em preenchimento":"Pendente";
+
+  // Load saved data if exists
+  var sv=getSavedAreaReport(key)||{};
 
   var fields=[
-    {id:"f-data",lbl:"Data da opera\u00e7\u00e3o",type:"date",val:"2026-09-30"},
+    {id:"f-data",lbl:"Data da opera\u00e7\u00e3o",type:"date",val:sv.data||"2026-09-30"},
     {id:"f-area",lbl:"\u00c1rea",type:"text",val:a.nome,readonly:true},
-    {id:"f-resp",lbl:"Respons\u00e1vel",type:"text",val:a.resp},
-    {id:"f-cond",lbl:"Condi\u00e7\u00e3o inicial da \u00e1rea",type:"textarea",val:""},
-    {id:"f-ocorr",lbl:"Ocorr\u00eancia durante a opera\u00e7\u00e3o",type:"textarea",val:""},
-    {id:"f-alt",lbl:"Altera\u00e7\u00e3o observada",type:"textarea",val:""},
-    {id:"f-acao",lbl:"A\u00e7\u00e3o tomada",type:"textarea",val:""},
-    {id:"f-pend",lbl:"Pend\u00eancia gerada",type:"textarea",val:""},
-    {id:"f-rec",lbl:"Recomenda\u00e7\u00e3o para pr\u00f3ximo offloading",type:"textarea",val:""},
-    {id:"f-obs",lbl:"Observa\u00e7\u00f5es adicionais",type:"textarea",val:""}
+    {id:"f-resp",lbl:"Respons\u00e1vel",type:"text",val:sv.responsavel||a.resp},
+    {id:"f-cond",lbl:"Condi\u00e7\u00e3o inicial da \u00e1rea",type:"textarea",val:sv.condicaoInicial||""},
+    {id:"f-ocorr",lbl:"Ocorr\u00eancia durante a opera\u00e7\u00e3o",type:"textarea",val:sv.ocorrencia||""},
+    {id:"f-alt",lbl:"Altera\u00e7\u00e3o observada",type:"textarea",val:sv.alteracao||""},
+    {id:"f-acao",lbl:"A\u00e7\u00e3o tomada",type:"textarea",val:sv.acao||""},
+    {id:"f-pend",lbl:"Pend\u00eancia gerada",type:"textarea",val:sv.pendencia||""},
+    {id:"f-rec",lbl:"Recomenda\u00e7\u00e3o para pr\u00f3ximo offloading",type:"textarea",val:sv.recomendacao||""},
+    {id:"f-obs",lbl:"Observa\u00e7\u00f5es adicionais",type:"textarea",val:sv.observacoes||""}
   ];
 
+  var stSel=sv.status||"Pendente";
+
   var fieldsHTML=fields.map(function(f){
+    var val=f.val.replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     var input=f.type==="textarea"
-      ?'<textarea id="'+f.id+'" style="width:100%;background:#111820;border:1px solid #243448;border-radius:6px;padding:8px 10px;font-size:14px;color:#D8E4F0;font-family:inherit;resize:vertical;min-height:64px;box-sizing:border-box">'+f.val+'</textarea>'
-      :'<input type="'+f.type+'" id="'+f.id+'" value="'+f.val+'"'+(f.readonly?' readonly':'')+' style="width:100%;height:36px;background:#111820;border:1px solid #243448;border-radius:6px;padding:0 10px;font-size:14px;color:#D8E4F0;font-family:inherit;box-sizing:border-box'+(f.readonly?';color:#6A849E':'')+'"/>';
+      ?'<textarea id="'+f.id+'" style="width:100%;background:#111820;border:1px solid #243448;border-radius:6px;padding:8px 10px;font-size:14px;color:#D8E4F0;font-family:inherit;resize:vertical;min-height:64px;box-sizing:border-box">'+val+'</textarea>'
+      :'<input type="'+f.type+'" id="'+f.id+'" value="'+val+'"'+(f.readonly?' readonly':'')+' style="width:100%;height:36px;background:#111820;border:1px solid #243448;border-radius:6px;padding:0 10px;font-size:14px;color:#D8E4F0;font-family:inherit;box-sizing:border-box'+(f.readonly?';color:#6A849E':'')+'"/>';
     return '<div style="margin-bottom:12px"><label style="display:block;font-size:9px;font-weight:700;color:#2E4055;letter-spacing:.05em;text-transform:uppercase;margin-bottom:4px">'+f.lbl+'</label>'+input+'</div>';
   }).join('');
 
@@ -3407,6 +3456,35 @@ function openAreaReportForm(key){
     +'<select id="f-status" style="width:100%;height:36px;background:#111820;border:1px solid #243448;border-radius:6px;padding:0 10px;font-size:14px;color:#D8E4F0;font-family:inherit;-webkit-appearance:none;box-sizing:border-box">'
     +stOpts.map(function(s){return '<option'+(s===stSel?' selected':'')+'>'+s+'</option>';}).join('')
     +'</select></div>';
+
+  // Save function embedded in window
+  var saveScript='function saveRecord(){'
+    +'var data={'
+      +'area:document.getElementById("f-area").value,'
+      +'responsavel:document.getElementById("f-resp").value,'
+      +'data:document.getElementById("f-data").value,'
+      +'condicaoInicial:document.getElementById("f-cond").value,'
+      +'ocorrencia:document.getElementById("f-ocorr").value,'
+      +'alteracao:document.getElementById("f-alt").value,'
+      +'acao:document.getElementById("f-acao").value,'
+      +'pendencia:document.getElementById("f-pend").value,'
+      +'recomendacao:document.getElementById("f-rec").value,'
+      +'observacoes:document.getElementById("f-obs").value,'
+      +'status:document.getElementById("f-status").value,'
+      +'savedAt:new Date().toLocaleString("pt-BR")'
+    +'};'
+    +'try{'
+      +'var ls=JSON.parse(localStorage.getItem("OFFREADY_AREA_REPORTS")||"{}");'
+      +'ls["'+key+'"]=data;'
+      +'localStorage.setItem("OFFREADY_AREA_REPORTS",JSON.stringify(ls));'
+    +'}catch(e){}'
+    +'if(window.opener&&window.opener.saveAreaReport){'
+      +'window.opener.saveAreaReport("'+key+'",data);'
+      +'if(window.opener.updateAreaReportCards)window.opener.updateAreaReportCards();'
+    +'}'
+    +'var msg=document.getElementById("save-msg");'
+    +'if(msg){msg.style.display="flex";setTimeout(function(){msg.style.display="none";},3000);}'
+  +'}';
 
   var html='<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">'
     +'<meta name="viewport" content="width=device-width,initial-scale=1.0">'
@@ -3422,12 +3500,16 @@ function openAreaReportForm(key){
     +'.ar-area-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:20px;font-size:11px;font-weight:700;margin-top:6px}'
     +'.ar-form{max-width:720px;margin:0 auto}'
     +'.ar-btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;padding-top:16px;border-top:1px solid #1C2838}'
-    +'.ar-btn{display:inline-flex;align-items:center;gap:5px;padding:10px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;min-height:44px;border:1px solid}'
-    +'.ar-btn.pdf{background:rgba(0,200,90,.08);border-color:rgba(0,200,90,.28);color:#00C85A}'
+    +'.ar-btn{display:inline-flex;align-items:center;gap:5px;padding:10px 16px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s;min-height:44px;border:1px solid}'
+    +'.ar-btn.save{background:rgba(0,200,90,.1);border-color:rgba(0,200,90,.35);color:#00C85A}'
+    +'.ar-btn.pdf{background:rgba(155,89,182,.08);border-color:rgba(155,89,182,.28);color:#CE93D8}'
     +'.ar-btn.print{background:rgba(30,127,216,.08);border-color:rgba(30,127,216,.25);color:#58A0E8}'
     +'.ar-btn.close{background:rgba(255,255,255,.03);border-color:#1C2838;color:#6A849E}'
-    +'.ar-btn:hover{opacity:.85}'
-    +'</style></head><body>'
+    +'.ar-btn:hover{opacity:.8}'
+    +'.save-msg{display:none;align-items:center;gap:8px;padding:10px 14px;background:rgba(0,200,90,.1);border:1px solid rgba(0,200,90,.3);border-radius:6px;font-size:12px;font-weight:600;color:#00C85A;margin-top:10px}'
+    +'</style>'
+    +'<script>'+saveScript+'<\/script>'
+    +'</head><body>'
     +'<div class="ar-form">'
     +'<div class="ar-header">'
       +'<div><div class="ar-logo">OFFREADY</div><div class="ar-logo-sub">FPSO Bravo &middot; PRIO Energy &middot; OP-OFF-2026-001</div>'
@@ -3439,10 +3521,12 @@ function openAreaReportForm(key){
     +'</div>'
     +fieldsHTML
     +selHTML
+    +'<div id="save-msg" class="save-msg">&#10003; Registro salvo com sucesso</div>'
     +'<div class="ar-btn-row">'
-      +'<button class="ar-btn pdf" onclick="window.print()"><span>&#9660;</span> Gerar PDF da \u00c1rea</button>'
-      +'<button class="ar-btn print" onclick="window.print()"><span>&#9113;</span> Imprimir</button>'
-      +'<button class="ar-btn close" onclick="window.close()"><span>&times;</span> Fechar</button>'
+      +'<button class="ar-btn save" onclick="saveRecord()">&#10003; Salvar Registro</button>'
+      +'<button class="ar-btn pdf" onclick="window.print()">&#9660; Gerar PDF da \u00c1rea</button>'
+      +'<button class="ar-btn print" onclick="window.print()">&#9113; Imprimir</button>'
+      +'<button class="ar-btn close" onclick="window.close()">&times; Fechar</button>'
     +'</div>'
     +'<div style="margin-top:12px;font-size:9px;color:#2E4055;padding-top:8px;border-top:1px solid #1C2838">'
       +'OFFREADY \u2014 FPSO Bravo &middot; PRIO Energy &middot; Relat\u00f3rio T\u00e9cnico por \u00c1rea &middot; '+dateStr
