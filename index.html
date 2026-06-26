@@ -3,26 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>OFFREADY — Offshore Hub</title>
+<title>OFFREADY — Operational Hub</title>
+<link rel="icon" type="image/svg+xml" href='data:image/svg+xml;utf8,
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<rect width="64" height="64" rx="16" fill="%2307090D"/>
+<circle cx="15" cy="20" r="5" fill="%2300C85A"/>
+<path d="M23 38h20l5-6H18l5 6Z" fill="none" stroke="%231E7FD8" stroke-width="2"/>
+<path d="M21 41c5 3 11 3 16 0 5 3 10 3 15 0" fill="none" stroke="%231E7FD8" stroke-width="2"/>
+<path d="M44 28c4 2 6 5 6 10M49 24c6 4 9 8 9 14" fill="none" stroke="%231E7FD8" stroke-width="2" stroke-linecap="round"/>
+<path d="M27 31h7M29 27h3M32 22v5" stroke="%23D8E4F0" stroke-width="2" stroke-linecap="round"/>
+</svg>'>
 <style>
 :root{
-  --bg:#06090E;
+  --bg:#05080D;
+  --bg2:#070B12;
   --panel:#0A1018;
   --panel2:#0D151F;
-  --line:#1A2635;
-  --line2:#25374A;
+  --line:#172636;
+  --line2:#263B52;
   --text:#EAF2FA;
-  --muted:#8294A8;
-  --soft:#506277;
+  --white:#F2F3F7;
+  --muted:#8A9CB0;
+  --soft:#4D6075;
+  --blue:#1E7FD8;
+  --blue2:#58A0E8;
   --green:#00C85A;
-  --blue:#58A0E8;
+  --cyan:#00B8CC;
   --amber:#E8A020;
   --red:#F04050;
   --purple:#B78CFF;
-  --cyan:#00B8CC;
+  --radius:20px;
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Arial,sans-serif;
   --mono:"SF Mono","Fira Code",Consolas,monospace;
-  --radius:18px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
@@ -31,198 +43,382 @@ body{
   font-family:var(--font);
   color:var(--text);
   background:
-    radial-gradient(circle at 12% 6%,rgba(30,127,216,.18),transparent 30%),
-    radial-gradient(circle at 90% 90%,rgba(0,200,90,.10),transparent 32%),
-    linear-gradient(180deg,#070A10 0%,#05070B 100%);
-  padding:26px;
+    radial-gradient(circle at 20% 12%,rgba(30,127,216,.18),transparent 32%),
+    radial-gradient(circle at 78% 88%,rgba(0,200,90,.10),transparent 30%),
+    linear-gradient(180deg,#060A11 0%,#03060A 100%);
+  overflow-x:hidden;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.32;
+  background:
+    linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+  background-size:44px 44px;
+  mask-image:radial-gradient(circle at 50% 30%,#000 0%,transparent 72%);
 }
 a{text-decoration:none;color:inherit}
-.app{max-width:1180px;margin:0 auto}
+.app{max-width:1240px;margin:0 auto;padding:28px}
 .topbar{
   display:flex;
-  align-items:center;
   justify-content:space-between;
+  align-items:center;
   gap:18px;
   margin-bottom:34px;
+  position:relative;
+  z-index:2;
 }
-.brand{display:flex;align-items:center;gap:12px}
-.brand-orb{
-  width:11px;height:11px;border-radius:50%;
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.brand-mark{
+  width:42px;
+  height:42px;
+  border-radius:13px;
+  background:linear-gradient(180deg,#0E1A28,#07101A);
+  border:1px solid rgba(88,160,232,.25);
+  display:grid;
+  place-items:center;
+  position:relative;
+  box-shadow:0 0 22px rgba(30,127,216,.08);
+}
+.brand-mark::before{
+  content:"";
+  width:9px;
+  height:9px;
+  border-radius:50%;
   background:var(--green);
-  box-shadow:0 0 18px rgba(0,200,90,.85);
+  position:absolute;
+  left:8px;
+  top:9px;
+  box-shadow:0 0 14px rgba(0,200,90,.95);
+  animation:pulse 1.8s infinite ease-in-out;
+}
+.brand-o{
+  width:20px;
+  height:15px;
+  border:5px solid var(--white);
+  border-radius:8px;
+  filter:drop-shadow(0 0 4px rgba(255,255,255,.15));
 }
 .brand-name{
   font-size:14px;
-  letter-spacing:.17em;
-  font-weight:760;
+  letter-spacing:.18em;
+  font-weight:850;
 }
-.brand-meta{
+.brand-sub{
   font-size:12px;
   color:var(--soft);
-  margin-top:2px;
+  margin-top:3px;
 }
-.env{
+.top-status{
   display:flex;
-  gap:8px;
   align-items:center;
+  gap:9px;
   flex-wrap:wrap;
+  justify-content:flex-end;
 }
-.env-pill{
-  font-size:11px;
-  color:var(--muted);
+.pill{
   border:1px solid var(--line);
   background:rgba(255,255,255,.025);
-  padding:7px 10px;
+  color:var(--muted);
   border-radius:999px;
+  padding:7px 10px;
+  font-size:11px;
+  font-weight:700;
 }
-.env-pill.live{
+.pill.live{
+  border-color:rgba(0,200,90,.24);
+  background:rgba(0,200,90,.075);
   color:var(--green);
-  border-color:rgba(0,200,90,.22);
-  background:rgba(0,200,90,.07);
 }
 .hero{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) 420px;
-  gap:28px;
+  min-height:560px;
+  display:flex;
   align-items:center;
-  margin-bottom:26px;
+  justify-content:center;
+  text-align:center;
+  position:relative;
+  padding:22px 0 34px;
 }
-.hero-copy{padding:10px 0}
+.hero-main{
+  position:relative;
+  z-index:2;
+  width:100%;
+  max-width:980px;
+  margin:0 auto;
+}
 .eyebrow{
   display:inline-flex;
   align-items:center;
   gap:8px;
-  color:var(--blue);
-  border:1px solid rgba(88,160,232,.18);
-  background:rgba(88,160,232,.055);
+  border:1px solid rgba(30,127,216,.18);
+  background:rgba(30,127,216,.045);
+  color:var(--blue2);
   padding:7px 11px;
   border-radius:999px;
-  font-size:12px;
-  margin-bottom:18px;
-}
-h1{
-  font-size:clamp(34px,5.4vw,60px);
-  line-height:1.02;
-  letter-spacing:-.05em;
-  font-weight:760;
-  max-width:690px;
-  margin-bottom:17px;
-}
-.hero-text{
-  font-size:15px;
-  line-height:1.75;
-  color:var(--muted);
-  max-width:660px;
-}
-.hero-actions{
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-  margin-top:24px;
-}
-.primary{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:44px;
-  padding:12px 17px;
-  border-radius:14px;
-  background:linear-gradient(135deg,rgba(0,200,90,.95),rgba(30,127,216,.92));
-  color:#05110C;
-  font-weight:820;
-  font-size:13px;
-  box-shadow:0 16px 36px rgba(0,0,0,.30);
-}
-.secondary{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:44px;
-  padding:12px 16px;
-  border-radius:14px;
-  border:1px solid var(--line2);
-  background:rgba(255,255,255,.025);
-  color:var(--text);
-  font-size:13px;
-  font-weight:680;
-}
-.primary:hover,.secondary:hover{filter:brightness(1.06)}
-.offshore-panel{
-  border:1px solid var(--line);
-  background:linear-gradient(180deg,rgba(13,21,31,.78),rgba(8,13,20,.62));
-  border-radius:24px;
-  padding:14px;
-  overflow:hidden;
-  position:relative;
-}
-.offshore-panel::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:radial-gradient(circle at 50% 10%,rgba(88,160,232,.12),transparent 45%);
-  pointer-events:none;
-}
-.offshore-head{
-  position:relative;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  padding:4px 4px 10px;
-}
-.offshore-title{
-  font-size:12px;
-  color:var(--muted);
-  font-weight:650;
-}
-.offshore-time{
-  font-family:var(--mono);
   font-size:11px;
-  color:var(--soft);
+  font-weight:760;
+  margin-bottom:24px;
+  letter-spacing:.06em;
+  text-transform:uppercase;
 }
-.fpsoscene{
+.eyebrow::before{
+  content:"";
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 13px rgba(0,200,90,.9);
+}
+.logo-stage{
+  position:relative;
+  width:100%;
+  max-width:920px;
+  margin:0 auto 18px;
+}
+.offready-logo{
   width:100%;
   height:auto;
   display:block;
-  position:relative;
+  overflow:visible;
 }
-.quickline{
+.logo-text{
+  font-family:var(--font);
+  font-size:92px;
+  font-weight:900;
+  letter-spacing:-3px;
+  fill:var(--white);
+  filter:drop-shadow(0 10px 18px rgba(0,0,0,.35));
+}
+.logo-subline{
+  font-family:var(--mono);
+  font-size:13px;
+  letter-spacing:9px;
+  fill:#92A3B6;
+}
+.blue-line{
+  stroke:var(--blue);
+  stroke-width:2.4;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.ship-line{
+  stroke:#0077FF;
+  stroke-width:2.2;
+  fill:none;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:drop-shadow(0 0 5px rgba(30,127,216,.55));
+}
+.data-dot{
+  fill:var(--blue);
+  filter:drop-shadow(0 0 5px rgba(30,127,216,.8));
+}
+.live-dot{
+  fill:var(--green);
+  filter:drop-shadow(0 0 16px rgba(0,200,90,.95));
+  animation:pulse 1.8s infinite ease-in-out;
+}
+.signal-arc{
+  stroke:var(--blue);
+  stroke-width:5;
+  fill:none;
+  stroke-linecap:round;
+  opacity:.95;
+  transform-origin:center;
+  animation:signal 1.8s infinite ease-in-out;
+}
+.signal-arc:nth-of-type(2){animation-delay:.18s;opacity:.72}
+.signal-arc:nth-of-type(3){animation-delay:.36s;opacity:.52}
+.data-route{
+  stroke:var(--blue);
+  stroke-width:2.2;
+  fill:none;
+  stroke-linecap:round;
+  stroke-dasharray:10 10;
+  animation:route 1.4s infinite linear;
+}
+.hero-copy{
+  max-width:740px;
+  margin:0 auto;
+  color:var(--muted);
+  font-size:15px;
+  line-height:1.8;
+}
+.hero-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:25px;
+  justify-content:center;
+}
+.btn{
+  min-height:40px;
+  padding:10px 14px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-size:12px;
+  font-weight:760;
+  transition:.18s ease;
+  letter-spacing:.02em;
+}
+.btn.primary{
+  background:rgba(0,200,90,.08);
+  border:1px solid rgba(0,200,90,.26);
+  color:var(--green);
+  box-shadow:none;
+}
+.btn.secondary{
+  border:1px solid rgba(88,160,232,.22);
+  background:rgba(88,160,232,.055);
+  color:#A8CEF5;
+}
+.btn:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.08);
+  background:rgba(255,255,255,.055);
+}
+.monitor{
+  position:relative;
+  z-index:2;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(13,21,31,.78),rgba(7,12,19,.68));
+  border-radius:24px;
+  padding:16px;
+  box-shadow:0 24px 80px rgba(0,0,0,.35);
+  overflow:hidden;
+}
+.monitor::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  background:radial-gradient(circle at 45% 15%,rgba(30,127,216,.16),transparent 42%);
+  pointer-events:none;
+}
+.monitor-head{
+  position:relative;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:14px;
+}
+.monitor-title{
+  font-size:12px;
+  color:var(--muted);
+  font-weight:800;
+  letter-spacing:.08em;
+}
+.clock{
+  font-family:var(--mono);
+  font-size:12px;
+  color:var(--soft);
+}
+.radar{
+  height:210px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(0,0,0,.18);
+  position:relative;
+  overflow:hidden;
+  margin-bottom:12px;
+}
+.radar::before{
+  content:"";
+  position:absolute;
+  inset:18px;
+  border-radius:50%;
+  border:1px solid rgba(88,160,232,.18);
+}
+.radar::after{
+  content:"";
+  position:absolute;
+  width:240px;
+  height:240px;
+  border-radius:50%;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  background:conic-gradient(from 0deg,rgba(0,200,90,.28),transparent 48deg,transparent 360deg);
+  animation:sweep 4s linear infinite;
+  opacity:.75;
+}
+.radar svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:2;
+}
+.radar-point{
+  position:absolute;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 14px rgba(0,200,90,.9);
+  z-index:3;
+  animation:pulse 1.9s infinite ease-in-out;
+}
+.radar-point.p1{left:72%;top:36%}
+.radar-point.p2{left:34%;top:61%;animation-delay:.4s}
+.radar-point.p3{left:53%;top:48%;animation-delay:.8s}
+.stat-grid{
   position:relative;
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:7px;
-  margin-top:10px;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
 }
-.quick{
+.stat{
   border:1px solid var(--line);
   background:rgba(255,255,255,.025);
-  border-radius:12px;
-  padding:8px 9px;
+  border-radius:14px;
+  padding:11px;
 }
-.quick-label{
-  font-size:9px;
+.stat-label{
+  font-size:10px;
   color:var(--soft);
   text-transform:uppercase;
   letter-spacing:.08em;
-  margin-bottom:4px;
+  margin-bottom:5px;
 }
-.quick-value{
-  font-size:12px;
-  font-weight:720;
+.stat-value{
+  font-size:16px;
+  font-weight:900;
+}
+.stat small{
+  display:block;
+  margin-top:4px;
+  font-size:11px;
+  color:var(--muted);
+}
+.section{
+  position:relative;
+  z-index:2;
+  margin-top:14px;
 }
 .section-head{
   display:flex;
-  align-items:flex-end;
   justify-content:space-between;
+  align-items:flex-end;
   gap:16px;
-  margin:22px 0 13px;
+  margin-bottom:13px;
 }
 .section-title{
-  font-size:13px;
+  font-size:12px;
+  letter-spacing:.14em;
   text-transform:uppercase;
-  letter-spacing:.12em;
   color:var(--soft);
-  font-weight:760;
+  font-weight:900;
 }
 .section-note{
   font-size:12px;
@@ -233,84 +429,82 @@ h1{
   grid-template-columns:repeat(6,1fr);
   gap:10px;
 }
-.system-card{
-  min-height:148px;
+.card{
+  min-height:154px;
   border:1px solid var(--line);
-  background:rgba(255,255,255,.022);
-  border-radius:16px;
+  background:rgba(255,255,255,.024);
+  border-radius:17px;
   padding:13px;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
   position:relative;
   overflow:hidden;
-  transform-origin:center;
-  transition:transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+  transition:.18s ease;
 }
-.system-card::after{
+.card::before{
   content:"";
   position:absolute;
-  left:0;right:0;bottom:0;
+  inset:auto 0 0 0;
   height:2px;
   background:var(--accent);
-  opacity:.65;
+  opacity:.75;
 }
-.system-card:hover{
-  transform:scale(1.055) translateY(-3px);
+.card:hover{
+  transform:scale(1.055) translateY(-4px);
   z-index:5;
-  border-color:color-mix(in srgb,var(--accent) 45%,var(--line));
-  background:rgba(255,255,255,.045);
-  box-shadow:0 18px 42px rgba(0,0,0,.34);
+  border-color:color-mix(in srgb,var(--accent) 48%,var(--line));
+  background:rgba(255,255,255,.05);
+  box-shadow:0 22px 55px rgba(0,0,0,.36);
 }
-.sys-top{
+.card-top{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:10px;
 }
-.sys-icon{
-  width:32px;
-  height:32px;
-  border-radius:11px;
+.card-icon{
+  width:34px;
+  height:34px;
+  border-radius:12px;
   display:grid;
   place-items:center;
   color:var(--accent);
-  background:color-mix(in srgb,var(--accent) 11%,transparent);
-  border:1px solid color-mix(in srgb,var(--accent) 24%,transparent);
-  font-size:16px;
+  border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);
+  background:color-mix(in srgb,var(--accent) 10%,transparent);
 }
-.sys-tag{
+.card-tag{
   font-size:9px;
   text-transform:uppercase;
   letter-spacing:.08em;
   color:var(--accent);
-  font-weight:760;
+  font-weight:900;
 }
-.sys-title{
+.card-title{
   font-size:13px;
-  font-weight:760;
+  font-weight:900;
   line-height:1.25;
-  margin-top:11px;
+  margin-top:12px;
 }
-.sys-desc{
+.card-desc{
   font-size:11px;
+  line-height:1.48;
   color:var(--muted);
-  line-height:1.45;
   margin-top:6px;
 }
-.sys-path{
+.card-route{
   margin-top:10px;
   padding-top:9px;
   border-top:1px solid var(--line);
-  color:var(--soft);
   font-family:var(--mono);
   font-size:9px;
+  color:var(--soft);
   word-break:break-all;
 }
 .anchor-panel{
   margin-top:22px;
   border:1px solid var(--line);
-  background:rgba(10,16,24,.58);
+  background:rgba(10,16,24,.56);
   border-radius:18px;
   overflow:hidden;
 }
@@ -321,14 +515,14 @@ h1{
   color:var(--muted);
   padding:13px 15px;
   display:flex;
-  align-items:center;
   justify-content:space-between;
+  align-items:center;
   cursor:pointer;
   font-family:var(--font);
 }
 .anchor-toggle span:first-child{
   font-size:12px;
-  font-weight:720;
+  font-weight:900;
   letter-spacing:.08em;
   text-transform:uppercase;
 }
@@ -336,10 +530,7 @@ h1{
   color:var(--soft);
   font-size:11px;
 }
-.anchor-body{
-  display:none;
-  padding:0 15px 15px;
-}
+.anchor-body{display:none;padding:0 15px 15px}
 .anchor-panel.open .anchor-body{display:block}
 .anchor-grid{
   display:grid;
@@ -347,19 +538,18 @@ h1{
   gap:8px;
 }
 .anchor-item{
-  border-top:1px solid var(--line);
   padding:11px 0;
+  border-top:1px solid var(--line);
 }
 .anchor-name{
   font-size:12px;
-  font-weight:700;
+  font-weight:850;
 }
 .anchor-path{
   margin-top:4px;
   font-family:var(--mono);
   font-size:10px;
   color:var(--soft);
-  word-break:break-all;
 }
 .footer{
   margin-top:30px;
@@ -369,204 +559,186 @@ h1{
   flex-wrap:wrap;
   color:var(--soft);
   font-size:12px;
+  padding-bottom:18px;
+}
+.glow-line{
+  position:absolute;
+  width:420px;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--blue),transparent);
+  opacity:.35;
+  animation:scan 5s infinite linear;
+  top:18%;
+  left:-420px;
+}
+@keyframes pulse{
+  0%,100%{opacity:.72;transform:scale(.92)}
+  50%{opacity:1;transform:scale(1.08)}
+}
+@keyframes signal{
+  0%{opacity:.1;transform:scale(.94)}
+  45%{opacity:1}
+  100%{opacity:.08;transform:scale(1.04)}
+}
+@keyframes route{
+  to{stroke-dashoffset:-40}
+}
+@keyframes sweep{
+  to{transform:translate(-50%,-50%) rotate(360deg)}
+}
+@keyframes scan{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(1800px)}
 }
 @media(max-width:1060px){
+  .hero{min-height:auto}
   .systems{grid-template-columns:repeat(3,1fr)}
-  .hero{grid-template-columns:1fr}
-  .offshore-panel{max-width:520px}
+  .logo-text{font-size:80px}
 }
-@media(max-width:680px){
-  body{padding:20px}
-  .topbar{flex-direction:column;align-items:flex-start;margin-bottom:26px}
-  .hero-actions a{width:100%}
+@media(max-width:720px){
+  .app{padding:20px}
+  .topbar{align-items:flex-start;flex-direction:column}
+  .top-status{justify-content:flex-start}
   .systems{grid-template-columns:1fr 1fr}
   .anchor-grid{grid-template-columns:1fr}
-  .quickline{grid-template-columns:1fr 1fr}
+  .logo-text{font-size:56px;letter-spacing:-2px}
+  .logo-subline{font-size:10px;letter-spacing:5px}
 }
-@media(max-width:420px){
+@media(max-width:440px){
   .systems{grid-template-columns:1fr}
-  .system-card:hover{transform:translateY(-2px)}
+  .stat-grid{grid-template-columns:1fr}
+  .card:hover{transform:translateY(-3px)}
 }
 </style>
 </head>
 <body>
 <div class="app">
+  <div class="glow-line"></div>
+
   <header class="topbar">
     <div class="brand">
-      <div class="brand-orb"></div>
+      <div class="brand-mark">
+        <div class="brand-o"></div>
+      </div>
       <div>
-        <div class="brand-name">OFFREADY HUB</div>
-        <div class="brand-meta">Portal offshore de acesso aos ambientes</div>
+        <div class="brand-name">OFFREADY</div>
+        <div class="brand-sub">Digital dispatch · FPSO operations · real-time connection</div>
       </div>
     </div>
-    <div class="env">
-      <div class="env-pill live">ONLINE</div>
-      <div class="env-pill">GitHub Pages</div>
-      <div class="env-pill">FPSO · Operação · Dados</div>
+    <div class="top-status">
+      <div class="pill live">● LIVE</div>
+      <div class="pill">CONNECTED</div>
+      <div class="pill">MISSION CRITICAL</div>
     </div>
   </header>
 
   <section class="hero">
-    <div class="hero-copy">
-      <div class="eyebrow">Central do projeto · FPSO · Offloading Intelligence</div>
-      <h1>Uma porta de entrada para todo o ecossistema OFFREADY.</h1>
-      <p class="hero-text">
-        Acesse o sistema operacional, controle de desenvolvimento, diretório de dados,
-        análise de demandas, documentação de origem e ambiente de teste em uma única página.
+    <div class="hero-main">
+      <div class="eyebrow">Operational monitoring hub</div>
+
+      <div class="logo-stage">
+        <svg class="offready-logo" viewBox="0 0 980 400" role="img" aria-label="OFFREADY logo with FPSO and data signal">
+          <circle class="live-dot" cx="70" cy="88" r="16"/>
+          <text class="logo-text" x="118" y="118">OFFREADY</text>
+
+          <!-- FPSO line art -->
+          <path class="ship-line" d="M78 250 L94 219 L466 219 L492 236 L482 250 Z"/>
+          <path class="ship-line" d="M93 250 Q210 263 322 250 T490 250"/>
+          <path class="ship-line" d="M116 218 L116 160 L134 218"/>
+          <path class="ship-line" d="M121 160 L128 160 M119 174 L132 174 M116 190 L136 190"/>
+          <path class="ship-line" d="M112 218 L140 218 M155 218 L155 195 L182 195 L190 218"/>
+          <path class="ship-line" d="M198 218 L198 204 L255 204 L260 218"/>
+          <path class="ship-line" d="M320 219 L320 187 L362 187 L362 219 M329 187 L329 172 M351 187 L351 174"/>
+          <path class="ship-line" d="M416 219 L416 198 L448 198 L448 219 M430 198 L430 172 M424 172 L436 172"/>
+          <path class="ship-line" d="M493 236 L545 236"/>
+          <path class="blue-line" d="M545 236 H823"/>
+          <path class="data-route" d="M484 250 H803"/>
+          <circle class="data-dot" cx="560" cy="236" r="6"/>
+          <circle class="data-dot" cx="800" cy="250" r="6"/>
+          <circle class="data-dot" cx="842" cy="236" r="6"/>
+          <path class="blue-line" d="M672 236 q16 -18 34 0"/>
+          <path class="signal-arc" d="M872 218 q24 26 0 58"/>
+          <path class="signal-arc" d="M898 201 q39 42 0 91"/>
+          <path class="signal-arc" d="M925 181 q58 62 0 134"/>
+          <text class="logo-subline" x="118" y="310">DIGITAL DISPATCH • FPSO OPERATIONS • REAL-TIME CONNECTION</text>
+        </svg>
+      </div>
+
+      <p class="hero-copy">
+        Portal central do ecossistema OFFREADY. Uma entrada única para operação,
+        desenvolvimento, análise de demandas, diretório de dados, documentos de origem
+        e ambiente de teste.
       </p>
+
       <div class="hero-actions">
-        <a class="primary" href="./offready-operacional/index.html">Abrir OFFREADY Operacional</a>
-        <a class="secondary" href="./offready-dev-control/index.html">Abrir Controle de Desenvolvimento</a>
+        <a class="btn primary" href="./offready-operacional/index.html">● Abrir OFFREADY Operacional</a>
+        <a class="btn secondary" href="./offready-dev-control/index.html">◷ Controle de Desenvolvimento</a>
       </div>
     </div>
-
-    <aside class="offshore-panel" aria-label="Visual offshore">
-      <div class="offshore-head">
-        <div>
-          <div class="offshore-title">FPSO BRAVO · HUB DE SISTEMAS</div>
-        </div>
-        <div class="offshore-time" id="clock">--:--</div>
-      </div>
-
-      <svg class="fpsoscene" viewBox="0 0 620 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cena offshore com FPSO e aliviador">
-        <defs>
-          <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#0B1420"/>
-            <stop offset="100%" stop-color="#06090E"/>
-          </linearGradient>
-          <linearGradient id="hull" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#1D2D40"/>
-            <stop offset="100%" stop-color="#111B28"/>
-          </linearGradient>
-          <linearGradient id="ship" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#172942"/>
-            <stop offset="100%" stop-color="#0F1726"/>
-          </linearGradient>
-          <filter id="glow"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        </defs>
-
-        <rect width="620" height="270" fill="url(#sea)"/>
-        <path d="M0 188 Q75 178 150 188 T300 188 T450 188 T620 188" fill="none" stroke="#1A2A3F" stroke-width="1.2" opacity=".8"/>
-        <path d="M0 208 Q95 198 190 208 T380 208 T620 208" fill="none" stroke="#111E2D" stroke-width="1" opacity=".9"/>
-
-        <g opacity=".95">
-          <path d="M38 178 L50 145 L300 145 L318 166 L310 178 Z" fill="url(#hull)" stroke="#2A3F58"/>
-          <rect x="62" y="121" width="82" height="25" rx="3" fill="#18263A" stroke="#263A52"/>
-          <rect x="74" y="127" width="8" height="5" rx="1" fill="#58A0E8" opacity=".55"/>
-          <rect x="88" y="127" width="8" height="5" rx="1" fill="#58A0E8" opacity=".45"/>
-          <rect x="102" y="127" width="8" height="5" rx="1" fill="#58A0E8" opacity=".40"/>
-          <rect x="156" y="128" width="78" height="18" rx="3" fill="#142034" stroke="#263A52"/>
-          <circle cx="174" cy="137" r="6" fill="#1F3550" stroke="#2E4763"/>
-          <circle cx="194" cy="137" r="6" fill="#1F3550" stroke="#2E4763"/>
-          <circle cx="214" cy="137" r="6" fill="#1F3550" stroke="#2E4763"/>
-          <rect x="244" y="112" width="44" height="34" rx="3" fill="#18263A" stroke="#263A52"/>
-          <rect x="252" y="84" width="9" height="29" rx="2" fill="#141C28"/>
-          <rect x="266" y="92" width="8" height="21" rx="2" fill="#141C28"/>
-          <circle cx="256" cy="76" r="7" fill="#2A3F58" opacity=".35"/>
-          <circle cx="270" cy="84" r="5" fill="#2A3F58" opacity=".25"/>
-          <line x1="294" y1="132" x2="334" y2="100" stroke="#2E4763" stroke-width="1.5"/>
-          <circle cx="336" cy="98" r="4" fill="#E8A020" opacity=".75"/>
-          <text x="170" y="170" text-anchor="middle" font-family="monospace" font-size="10" fill="#5E7B9A" font-weight="700">FPSO BRAVO</text>
-        </g>
-
-        <path d="M314 166 Q376 181 438 166" fill="none" stroke="#00C85A" stroke-width="3" stroke-dasharray="8 6" filter="url(#glow)" opacity=".9">
-          <animate attributeName="stroke-dashoffset" from="0" to="-28" dur="1.2s" repeatCount="indefinite"/>
-        </path>
-        <text x="377" y="194" text-anchor="middle" font-family="monospace" font-size="9" fill="#00C85A" opacity=".75">OFFLOADING DATA FLOW</text>
-
-        <g opacity=".92">
-          <path d="M438 178 L448 150 L565 150 L588 166 L592 178 Z" fill="url(#ship)" stroke="#24384F"/>
-          <rect x="458" y="124" width="55" height="26" rx="3" fill="#111D30" stroke="#24384F"/>
-          <rect x="468" y="112" width="42" height="12" rx="3" fill="#17253A"/>
-          <rect x="524" y="135" width="32" height="15" rx="2" fill="#10203A" stroke="#24384F"/>
-          <rect x="524" y="143" width="31" height="7" rx="1" fill="#12321E"/>
-          <text x="515" y="170" text-anchor="middle" font-family="monospace" font-size="9" fill="#4D6A8A" font-weight="700">ALIVIADOR</text>
-        </g>
-
-        <rect x="18" y="18" width="142" height="28" rx="8" fill="rgba(0,200,90,.07)" stroke="rgba(0,200,90,.22)"/>
-        <text x="89" y="30" text-anchor="middle" font-family="monospace" font-size="9" fill="#00C85A" font-weight="700">OFFREADY ONLINE</text>
-        <text x="89" y="40" text-anchor="middle" font-family="monospace" font-size="7" fill="#57C987">hub operacional</text>
-      </svg>
-
-      <div class="quickline">
-        <div class="quick">
-          <div class="quick-label">Ambientes</div>
-          <div class="quick-value">6</div>
-        </div>
-        <div class="quick">
-          <div class="quick-label">Base</div>
-          <div class="quick-value">GitHub</div>
-        </div>
-        <div class="quick">
-          <div class="quick-label">Dados</div>
-          <div class="quick-value">Supabase</div>
-        </div>
-      </div>
-    </aside>
   </section>
 
-  <div class="section-head">
-    <div>
-      <div class="section-title">Diretórios do projeto</div>
+  <section class="section">
+    <div class="section-head">
+      <div class="section-title">Ambientes do projeto</div>
+      <div class="section-note">Clique para abrir · hover para destacar</div>
     </div>
-    <div class="section-note">Passe o mouse para destacar · clique para abrir</div>
-  </div>
 
-  <main class="systems">
-    <a class="system-card" style="--accent:var(--green)" href="./offready-operacional/index.html">
-      <div>
-        <div class="sys-top"><div class="sys-icon">⚙</div><div class="sys-tag">principal</div></div>
-        <div class="sys-title">OFFREADY Operacional</div>
-        <div class="sys-desc">Sistema principal da operação de offloading.</div>
-      </div>
-      <div class="sys-path">/offready-operacional/</div>
-    </a>
+    <main class="systems">
+      <a class="card" style="--accent:var(--green)" href="./offready-operacional/index.html">
+        <div>
+          <div class="card-top"><div class="card-icon">⚙</div><div class="card-tag">principal</div></div>
+          <div class="card-title">OFFREADY Operacional</div>
+          <div class="card-desc">Sistema principal de prontidão, operação, conclusão e relatório.</div>
+        </div>
+        <div class="card-route">/offready-operacional/</div>
+      </a>
 
-    <a class="system-card" style="--accent:var(--blue)" href="./offready-dev-control/index.html">
-      <div>
-        <div class="sys-top"><div class="sys-icon">◷</div><div class="sys-tag">controle</div></div>
-        <div class="sys-title">Desenvolvimento</div>
-        <div class="sys-desc">Demandas, tempo, bugs, ideias e Supabase.</div>
-      </div>
-      <div class="sys-path">/offready-dev-control/</div>
-    </a>
+      <a class="card" style="--accent:var(--blue2)" href="./offready-dev-control/index.html">
+        <div>
+          <div class="card-top"><div class="card-icon">◷</div><div class="card-tag">controle</div></div>
+          <div class="card-title">Desenvolvimento</div>
+          <div class="card-desc">Tempo, demandas, bugs, ideias, Supabase e sincronização.</div>
+        </div>
+        <div class="card-route">/offready-dev-control/</div>
+      </a>
 
-    <a class="system-card" style="--accent:var(--purple)" href="./diretorio-dados/index.html">
-      <div>
-        <div class="sys-top"><div class="sys-icon">▦</div><div class="sys-tag">dados</div></div>
-        <div class="sys-title">Diretório de Dados</div>
-        <div class="sys-desc">Banco, exportações, registros e backups.</div>
-      </div>
-      <div class="sys-path">/diretorio-dados/</div>
-    </a>
+      <a class="card" style="--accent:var(--purple)" href="./diretorio-dados/index.html">
+        <div>
+          <div class="card-top"><div class="card-icon">▦</div><div class="card-tag">dados</div></div>
+          <div class="card-title">Diretório de Dados</div>
+          <div class="card-desc">Banco, exportações, registros, backups e estrutura técnica.</div>
+        </div>
+        <div class="card-route">/diretorio-dados/</div>
+      </a>
 
-    <a class="system-card" style="--accent:var(--amber)" href="./analise-demandas/index.html">
-      <div>
-        <div class="sys-top"><div class="sys-icon">⌁</div><div class="sys-tag">análise</div></div>
-        <div class="sys-title">Análise de Demandas</div>
-        <div class="sys-desc">Backlog, prioridades e próximos patches.</div>
-      </div>
-      <div class="sys-path">/analise-demandas/</div>
-    </a>
+      <a class="card" style="--accent:var(--amber)" href="./analise-demandas/index.html">
+        <div>
+          <div class="card-top"><div class="card-icon">⌁</div><div class="card-tag">análise</div></div>
+          <div class="card-title">Análise de Demandas</div>
+          <div class="card-desc">Backlog, prioridades, próximos patches e evolução do sistema.</div>
+        </div>
+        <div class="card-route">/analise-demandas/</div>
+      </a>
 
-    <a class="system-card" style="--accent:var(--cyan)" href="./documentos/index.html">
-      <div>
-        <div class="sys-top"><div class="sys-icon">◫</div><div class="sys-tag">origem</div></div>
-        <div class="sys-title">Documento de Origem</div>
-        <div class="sys-desc">Contexto, versões, decisões e premissas.</div>
-      </div>
-      <div class="sys-path">/documentos/</div>
-    </a>
+      <a class="card" style="--accent:var(--cyan)" href="./documentos/index.html">
+        <div>
+          <div class="card-top"><div class="card-icon">◫</div><div class="card-tag">origem</div></div>
+          <div class="card-title">Documento de Origem</div>
+          <div class="card-desc">Contexto, decisões, versões estáveis, premissas e arquitetura.</div>
+        </div>
+        <div class="card-route">/documentos/</div>
+      </a>
 
-    <a class="system-card" style="--accent:var(--red)" href="./offready-teste/index.html">
-      <div>
-        <div class="sys-top"><div class="sys-icon">△</div><div class="sys-tag">sandbox</div></div>
-        <div class="sys-title">Teste / Apresentação</div>
-        <div class="sys-desc">Ambiente seguro para validar e demonstrar.</div>
-      </div>
-      <div class="sys-path">/offready-teste/</div>
-    </a>
-  </main>
+      <a class="card" style="--accent:var(--red)" href="./offready-teste/index.html">
+        <div>
+          <div class="card-top"><div class="card-icon">△</div><div class="card-tag">sandbox</div></div>
+          <div class="card-title">Teste / Apresentação</div>
+          <div class="card-desc">Ambiente seguro para validar patches e demonstrar versões.</div>
+        </div>
+        <div class="card-route">/offready-teste/</div>
+      </a>
+    </main>
+  </section>
 
   <section class="anchor-panel" id="anchors">
     <button class="anchor-toggle" type="button" id="anchorBtn">
@@ -587,8 +759,8 @@ h1{
   </section>
 
   <footer class="footer">
-    <span>OFFREADY HUB · Portal offshore central</span>
-    <span>Preparar → Desenvolver → Testar → Operar → Melhorar</span>
+    <span>OFFREADY — Always on. Always ready.</span>
+    <span>Digital dispatch · FPSO operations · connected intelligence</span>
   </footer>
 </div>
 
@@ -596,15 +768,15 @@ h1{
 (function(){
   const clock = document.getElementById("clock");
   function tick(){
-    clock.textContent = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+    if(clock) clock.textContent = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
   }
   tick();
-  setInterval(tick, 10000);
+  setInterval(tick,10000);
 
   const panel = document.getElementById("anchors");
   const btn = document.getElementById("anchorBtn");
   const state = document.getElementById("anchorState");
-  btn.addEventListener("click", function(){
+  btn.addEventListener("click",function(){
     panel.classList.toggle("open");
     state.textContent = panel.classList.contains("open") ? "ocultar" : "mostrar";
   });
