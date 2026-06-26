@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OFFREADY DEV CONTROL — Banco de Desenvolvimento</title>
+<style>
+:root{
+  --bg:#05080d;--bg2:#08111b;--bg3:#0d1926;--card:#0b1420;--line:#18324a;
+  --text:#e9f3ff;--muted:#7d97ad;--blue:#1aa7ff;--cyan:#19d3ff;--green:#20d66b;
+  --yellow:#f5b942;--orange:#ff7a1a;--red:#ff4d5e;--purple:#b06cff;
+  --shadow:0 20px 80px rgba(0,0,0,.45);--rad:18px;--rad2:12px;
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;--mono:"SF Mono","Consolas",monospace;
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at top right,rgba(26,167,255,.18),transparent 34%),linear-gradient(180deg,#05080d,#060b12 62%,#030609);color:var(--text);font-family:var(--font)}
+body{padding:18px}.app{max-width:1480px;margin:0 auto}.top{display:grid;grid-template-columns:1.2fr .8fr;gap:14px;margin-bottom:14px}.hero{position:relative;overflow:hidden;border:1px solid var(--line);background:linear-gradient(135deg,rgba(8,17,27,.95),rgba(5,8,13,.92));border-radius:var(--rad);padding:22px;box-shadow:var(--shadow)}.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(26,167,255,.12),transparent 45%),url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="560" height="180" viewBox="0 0 560 180"><path d="M20 150 L80 110 L140 140 L210 80 L280 110 L360 45 L520 120" fill="none" stroke="%231aa7ff" stroke-opacity="0.16" stroke-width="2"/><path d="M80 150 v-55 M210 150 v-85 M360 150 v-120" stroke="%231aa7ff" stroke-opacity="0.13"/><circle cx="360" cy="45" r="28" fill="none" stroke="%231aa7ff" stroke-opacity="0.12"/></svg>') right center/auto 100% no-repeat;pointer-events:none}.brand{position:relative;display:flex;align-items:center;gap:16px}.logo{width:74px;height:74px;border:2px solid rgba(26,167,255,.55);border-radius:19px;display:flex;align-items:center;justify-content:center;background:rgba(26,167,255,.08);box-shadow:0 0 30px rgba(26,167,255,.12);font-weight:900;font-size:28px;color:#dff5ff}.h1{font-size:36px;font-weight:900;letter-spacing:.04em;line-height:1}.h2{font-size:15px;color:var(--blue);font-weight:800;margin-top:6px}.sub{position:relative;margin-top:15px;color:var(--muted);font-size:13px;line-height:1.6;max-width:780px}.statusbar{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.stat{border:1px solid var(--line);background:rgba(11,20,32,.88);border-radius:var(--rad);padding:17px;box-shadow:var(--shadow)}.stat-l{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:800}.stat-v{font-size:28px;font-weight:900;margin-top:8px}.stat-s{font-size:11px;color:var(--muted);margin-top:5px}.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.panel{border:1px solid var(--line);background:rgba(8,17,27,.88);border-radius:var(--rad);box-shadow:var(--shadow);overflow:hidden}.ph{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(26,167,255,.08),rgba(8,17,27,.2))}.pt{font-weight:850;font-size:13px;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:8px}.num{width:24px;height:24px;border-radius:7px;background:rgba(26,167,255,.15);border:1px solid rgba(26,167,255,.35);display:flex;align-items:center;justify-content:center;color:#9dddff}.pb{padding:14px 16px}.row{display:grid;grid-template-columns:repeat(12,1fr);gap:10px}.field{display:flex;flex-direction:column;gap:5px}.field label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:800}.input,.select,.textarea{width:100%;border:1px solid var(--line);background:#07111b;color:var(--text);border-radius:10px;padding:11px 12px;font-family:var(--font);font-size:13px;outline:none}.textarea{min-height:76px;resize:vertical;line-height:1.45}.input:focus,.select:focus,.textarea:focus{border-color:rgba(26,167,255,.65);box-shadow:0 0 0 3px rgba(26,167,255,.08)}.btn{border:1px solid var(--line);background:#0d1926;color:var(--text);border-radius:11px;padding:10px 13px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center;transition:.15s}.btn:hover{border-color:rgba(26,167,255,.55);transform:translateY(-1px)}.btn.primary{background:linear-gradient(135deg,rgba(26,167,255,.22),rgba(25,211,255,.12));border-color:rgba(26,167,255,.48);color:#bdeeff}.btn.green{background:rgba(32,214,107,.12);border-color:rgba(32,214,107,.35);color:#8dffbd}.btn.yellow{background:rgba(245,185,66,.12);border-color:rgba(245,185,66,.35);color:#ffd98b}.btn.red{background:rgba(255,77,94,.12);border-color:rgba(255,77,94,.35);color:#ff9aa4}.btn.full{width:100%}.actions{display:flex;gap:8px;flex-wrap:wrap}.tabs{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}.tab{padding:8px 11px;border-radius:999px;border:1px solid var(--line);background:#07111b;color:var(--muted);cursor:pointer;font-size:12px;font-weight:800}.tab.on{border-color:rgba(26,167,255,.55);background:rgba(26,167,255,.1);color:#bdeeff}.task-list{display:flex;flex-direction:column;gap:9px;max-height:540px;overflow:auto;padding-right:4px}.task{border:1px solid var(--line);background:linear-gradient(135deg,rgba(13,25,38,.92),rgba(7,17,27,.92));border-radius:14px;padding:12px}.task-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.task-title{font-weight:850;font-size:14px}.task-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:850;border:1px solid;color:var(--muted)}.p-new{background:rgba(125,151,173,.1);border-color:rgba(125,151,173,.25)}.p-doing{background:rgba(26,167,255,.1);border-color:rgba(26,167,255,.35);color:#8ed8ff}.p-done{background:rgba(32,214,107,.1);border-color:rgba(32,214,107,.35);color:#85ffb8}.p-hold{background:rgba(245,185,66,.1);border-color:rgba(245,185,66,.35);color:#ffd98b}.p-high{background:rgba(255,77,94,.1);border-color:rgba(255,77,94,.35);color:#ff9aa4}.p-mid{background:rgba(245,185,66,.1);border-color:rgba(245,185,66,.35);color:#ffd98b}.p-low{background:rgba(32,214,107,.1);border-color:rgba(32,214,107,.35);color:#85ffb8}.task-desc{font-size:12px;color:var(--muted);line-height:1.55;margin-top:9px}.bar{height:8px;background:#07111b;border:1px solid var(--line);border-radius:999px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:999px;transition:.35s}.thermo{margin-top:10px;display:grid;grid-template-columns:80px 1fr 44px;gap:8px;align-items:center}.thermo-l{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase}.thermo-v{font-family:var(--mono);font-size:12px;color:#bdeeff;text-align:right}.mini-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.mini{font-size:10px;padding:6px 8px;border-radius:8px}.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.col{border:1px solid var(--line);border-radius:14px;background:rgba(5,8,13,.35);min-height:260px}.colh{padding:10px 12px;border-bottom:1px solid var(--line);font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:900;color:var(--muted);display:flex;justify-content:space-between}.colb{padding:10px;display:flex;flex-direction:column;gap:8px;max-height:390px;overflow:auto}.kcard{border:1px solid var(--line);border-radius:12px;background:#08131f;padding:10px;font-size:12px}.kcard b{display:block;font-size:12px;margin-bottom:5px}.kcard span{color:var(--muted);font-size:11px}.progress-ring{width:148px;height:148px;border-radius:50%;background:conic-gradient(var(--green) 0deg,var(--green) 0deg,#0b1a27 0deg);display:flex;align-items:center;justify-content:center;margin:auto;border:1px solid var(--line);box-shadow:inset 0 0 30px rgba(0,0,0,.35)}.ring-inner{width:112px;height:112px;border-radius:50%;background:#07111b;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-direction:column}.ring-v{font-size:26px;font-weight:950}.ring-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.timer{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center}.timerbox{text-align:center;border:1px solid var(--line);border-radius:14px;background:#07111b;padding:14px}.time{font-family:var(--mono);font-size:38px;font-weight:900;color:#bdeeff}.mode{font-size:11px;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.08em}.log-list{display:flex;flex-direction:column;gap:8px;max-height:260px;overflow:auto}.log{border:1px solid var(--line);border-radius:12px;background:#08131f;padding:10px}.log b{font-size:12px}.log p{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.45}.report{min-height:360px;font-family:var(--mono);font-size:12px;line-height:1.55;white-space:pre-wrap}.footer{margin-top:14px;border:1px solid var(--line);border-radius:var(--rad);background:rgba(8,17,27,.7);padding:12px 16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:var(--muted);font-size:11px}.dot{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block;box-shadow:0 0 12px var(--green)}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#0d1926;border:1px solid rgba(26,167,255,.4);color:#dff5ff;border-radius:999px;padding:11px 16px;font-size:12px;font-weight:800;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.2s;z-index:99}.toast.show{opacity:1;bottom:28px}.hide{display:none!important}
+@media(max-width:1000px){.top,.grid,.timer{grid-template-columns:1fr}.statusbar{grid-template-columns:repeat(3,1fr)}.kanban{grid-template-columns:1fr}.row{grid-template-columns:1fr}.field{grid-column:auto!important}.time{font-size:30px}}@media(max-width:620px){body{padding:10px}.statusbar{grid-template-columns:1fr}.brand{align-items:flex-start}.logo{width:58px;height:58px}.h1{font-size:26px}.task-top{flex-direction:column}.thermo{grid-template-columns:1fr}.thermo-v{text-align:left}.ph{align-items:flex-start;gap:8px;flex-direction:column}}
+
+
+/* ══════════════════════════════════════════════════════════════
+   VISUAL OPTIMIZATION PATCH — OFFREADY DEV CONTROL v2.1
+   Objetivo: menos peso visual, leitura textual das demandas e modos de trabalho.
+══════════════════════════════════════════════════════════════ */
+:root{--shadow:0 12px 38px rgba(0,0,0,.28);--rad:14px;--rad2:10px;--line:#14283d;--muted:#86a0b5}
+body{padding:14px;background:radial-gradient(circle at top right,rgba(26,167,255,.12),transparent 30%),linear-gradient(180deg,#05080d,#050910 70%,#030609)}
+.app{max-width:1360px}.top{grid-template-columns:1fr 520px;gap:12px;margin-bottom:12px}.hero{padding:16px 18px}.hero:before{opacity:.55}.brand{gap:12px}.logo{width:54px;height:54px;border-radius:14px;font-size:20px;font-weight:760}.h1{font-size:25px;font-weight:760;letter-spacing:.025em}.h2{font-size:12px;font-weight:650;margin-top:4px;color:#8fdcff}.sub{margin-top:10px;font-size:12px;line-height:1.5;max-width:680px}.statusbar{gap:8px}.stat{padding:12px 13px;border-radius:14px}.stat-l{font-size:9px;font-weight:650;letter-spacing:.09em}.stat-v{font-size:22px;font-weight:760;margin-top:6px}.stat-s{font-size:10px}.grid{gap:12px}.panel{border-radius:14px}.ph{padding:11px 13px}.pt{font-weight:680;font-size:11px;letter-spacing:.035em}.num{width:21px;height:21px;border-radius:6px;font-size:10px}.pb{padding:12px 13px}.row{gap:8px}.field{gap:4px}.field label{font-size:9px;letter-spacing:.06em;font-weight:620}.input,.select,.textarea{border-radius:9px;padding:9px 10px;font-size:12px;background:#06101a}.textarea{min-height:64px;line-height:1.42}.btn{border-radius:9px;padding:8px 10px;font-size:11px;font-weight:650}.tabs{gap:5px;margin-bottom:10px}.tab{padding:6px 9px;font-size:11px;font-weight:650}.task-list{gap:7px;max-height:520px}.task{padding:11px 12px;border-radius:11px;background:#07111b}.task-top{gap:8px}.task-title{font-size:13px;font-weight:620;line-height:1.35;letter-spacing:0}.task-desc{font-size:12px;color:#9aafc1;line-height:1.48;margin-top:6px;font-weight:400}.task-meta{margin-top:6px;gap:5px}.pill{font-size:9px;font-weight:620;padding:3px 7px}.thermo{grid-template-columns:70px 1fr 38px;margin-top:8px}.thermo-l{font-size:9px;font-weight:620}.thermo-v{font-size:11px}.bar{height:6px}.mini-actions{margin-top:8px}.mini{font-size:9px;padding:5px 7px}.kanban{gap:8px}.col{border-radius:12px;min-height:210px}.colh{padding:8px 10px;font-size:10px;font-weight:680}.colb{padding:8px;gap:6px;max-height:310px}.kcard{padding:8px;border-radius:9px;background:#07111b}.kcard b{font-size:11px;font-weight:620}.kcard span{font-size:10px}.progress-ring{width:128px;height:128px}.ring-inner{width:96px;height:96px}.ring-v{font-size:22px;font-weight:760}.ring-l{font-size:9px}.timerbox{padding:12px;border-radius:12px}.time{font-size:32px;font-weight:760}.mode{font-size:10px;font-weight:650}.log{padding:9px;border-radius:10px}.log b{font-size:11px;font-weight:620}.log p{font-size:11px}.report{min-height:320px;font-size:11px}.footer{padding:10px 13px;font-size:10px}
+.view-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;border:1px solid var(--line);background:rgba(8,17,27,.72);border-radius:14px;padding:10px 12px;color:var(--muted);box-shadow:var(--shadow)}
+.view-left{display:flex;align-items:center;gap:8px;font-size:11px;line-height:1.35}.view-left strong{color:var(--text);font-weight:650}.view-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);flex-shrink:0}.view-actions{display:flex;gap:6px;flex-wrap:wrap}.view-btn{border:1px solid var(--line);background:#06101a;color:var(--muted);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:650;cursor:pointer}.view-btn.on{border-color:rgba(26,167,255,.48);background:rgba(26,167,255,.1);color:#bdeeff}
+.text-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px;color:#7f98ac;font-size:10.5px;line-height:1.35}.text-meta span{display:inline-flex;align-items:center;gap:4px}.text-meta b{font-weight:650;color:#c8d6e2}.status-dot{width:6px;height:6px;border-radius:50%;background:#7d97ad;display:inline-block}.status-dot.doing{background:var(--blue)}.status-dot.done{background:var(--green)}.status-dot.hold{background:var(--yellow)}.task-toolbar{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.task-id{font-family:var(--mono);font-size:9px;color:#50687c;margin-top:2px}
+body.view-focus .dev-secondary,body.view-focus .statusbar,body.view-focus .hero .sub{display:none!important}body.view-focus .top{grid-template-columns:1fr}body.view-focus .dev-grid-review,body.view-focus .dev-grid-output{grid-template-columns:1fr}body.view-focus .report-panel{display:none}body.view-focus .main-entry{order:1}body.view-focus .focus-timer{order:2}
+body.view-review .main-entry,body.view-review .focus-timer{display:none!important}body.view-review .dev-grid-review,body.view-review .dev-grid-output{grid-template-columns:1fr}body.view-review .process-thermo{display:block!important}.demand-db .ph{background:linear-gradient(90deg,rgba(26,167,255,.06),rgba(8,17,27,.1))}
+@media(max-width:1000px){.top{grid-template-columns:1fr}.view-toolbar{align-items:flex-start;flex-direction:column}.view-left{align-items:flex-start}.h1{font-size:22px}.statusbar{grid-template-columns:repeat(3,1fr)}}@media(max-width:620px){body{padding:9px}.h1{font-size:20px}.logo{width:46px;height:46px}.statusbar{grid-template-columns:1fr}.view-actions{width:100%}.view-btn{flex:1}.task-toolbar{justify-content:flex-start}.time{font-size:28px}}
+
+
+/* SUPABASE SYNC — OFFREADY DEV */
+.cloud-panel{margin-bottom:14px;border:1px solid rgba(32,214,107,.22);background:linear-gradient(135deg,rgba(32,214,107,.06),rgba(8,17,27,.82));border-radius:var(--rad);box-shadow:var(--shadow);overflow:hidden}
+.cloud-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 16px;border-bottom:1px solid rgba(32,214,107,.16)}
+.cloud-title{font-size:13px;font-weight:850;letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:center;gap:8px;color:#bfffd8}
+.cloud-body{padding:14px 16px;display:grid;grid-template-columns:1.2fr 1.2fr .8fr;gap:10px;align-items:end}
+.cloud-help{grid-column:1/-1;font-size:11px;color:var(--muted);line-height:1.55}
+.cloud-status{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#07111b;border-radius:999px;padding:6px 10px;font-size:11px;color:var(--muted);font-weight:800;white-space:nowrap}
+.cloud-status.ok{border-color:rgba(32,214,107,.35);color:#8dffbd;background:rgba(32,214,107,.08)}
+.cloud-status.warn{border-color:rgba(245,185,66,.35);color:#ffd98b;background:rgba(245,185,66,.08)}
+.cloud-status.err{border-color:rgba(255,77,94,.35);color:#ff9aa4;background:rgba(255,77,94,.08)}
+.cloud-actions{display:flex;gap:8px;flex-wrap:wrap;grid-column:1/-1}
+.cloud-mini{font-size:10px;color:var(--muted);margin-top:5px;line-height:1.4}
+@media(max-width:1000px){.cloud-body{grid-template-columns:1fr}.cloud-actions{grid-column:auto}}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <section class="hero">
+      <div class="brand"><div class="logo">OF</div><div><div class="h1">OFFREADY DEV CONTROL</div><div class="h2">Banco de Desenvolvimento • Produtividade • Sincronia com ChatGPT</div></div></div>
+      <div class="sub">Painel pessoal para registrar tempo dedicado, demandas, ideias, correções, decisões, prazos e gerar um relatório pronto para colar no ChatGPT. O objetivo é manter o desenvolvimento organizado, visual e com sensação de alta performance.</div>
+    </section>
+    <section class="statusbar">
+      <div class="stat"><div class="stat-l">Tempo total</div><div class="stat-v" id="st-total">0h</div><div class="stat-s">horas registradas no banco</div></div>
+      <div class="stat"><div class="stat-l">Demandas ativas</div><div class="stat-v" id="st-active">0</div><div class="stat-s">não concluídas + em andamento</div></div>
+      <div class="stat"><div class="stat-l">Termômetro</div><div class="stat-v" id="st-thermo">0%</div><div class="stat-s">média de avanço das demandas</div></div>
+    </section>
+  </div>
+
+  <div class="view-toolbar">
+    <div class="view-left">
+      <span class="view-dot"></span>
+      <strong>Modo de trabalho</strong>
+      <span>Organize o painel por foco, revisão ou visão completa.</span>
+    </div>
+    <div class="view-actions">
+      <button class="view-btn on" id="view-full" onclick="setViewMode('full')">Completo</button>
+      <button class="view-btn" id="view-focus" onclick="setViewMode('focus')">Foco</button>
+      <button class="view-btn" id="view-review" onclick="setViewMode('review')">Revisão</button>
+    </div>
+  </div>
+
+  <section class="cloud-panel">
+    <div class="cloud-head">
+      <div class="cloud-title"><span class="dot"></span>Supabase Sync — banco real na nuvem</div>
+      <div class="cloud-status warn" id="cloud-status">Modo local</div>
+    </div>
+    <div class="cloud-body">
+      <div class="field">
+        <label>Supabase Project URL</label>
+        <input class="input" id="sb-url" placeholder="https://xxxxx.supabase.co" />
+        <div class="cloud-mini">Project Settings → API → Project URL</div>
+      </div>
+      <div class="field">
+        <label>Anon / public key</label>
+        <input class="input" id="sb-key" placeholder="Cole a anon key / publishable key" />
+        <div class="cloud-mini">Use apenas a chave pública. Nunca use service_role no HTML.</div>
+      </div>
+      <div class="field">
+        <label>Tabela principal</label>
+        <input class="input" id="sb-table" value="offready_dev_entries" />
+        <div class="cloud-mini">Logs usam: offready_dev_logs</div>
+      </div>
+      <div class="cloud-actions">
+        <button class="btn green" onclick="saveSupabaseConfig()">Salvar configuração</button>
+        <button class="btn primary" onclick="testSupabaseConnection()">Testar conexão</button>
+        <button class="btn" onclick="loadFromCloud()">Carregar da nuvem</button>
+        <button class="btn yellow" onclick="pushLocalToCloud()">Enviar local para nuvem</button>
+        <button class="btn red" onclick="clearSupabaseConfig()">Remover configuração</button>
+      </div>
+      <div class="cloud-help">
+        Fluxo recomendado: crie as tabelas no Supabase, salve URL + anon key aqui, teste a conexão e depois envie o banco local para a nuvem. A partir daí, seus registros sincronizam entre computador de bordo, casa e celular.
+      </div>
+    </div>
+  </section>
+
+  <div class="grid dev-grid-entry">
+    <section class="panel main-entry">
+      <div class="ph"><div class="pt"><span class="num">1</span>Nova demanda / ideia / correção</div><div class="actions"><button class="btn green" onclick="saveEntry()">Salvar no banco</button><button class="btn" onclick="clearForm()">Limpar</button></div></div>
+      <div class="pb">
+        <div class="row">
+          <div class="field" style="grid-column:span 5"><label>Título</label><input class="input" id="f-title" placeholder="Ex.: Resiliência do formulário por área" /></div>
+          <div class="field" style="grid-column:span 2"><label>Tipo</label><select class="select" id="f-type"><option>Demanda</option><option>Ideia</option><option>Correção</option><option>Bug</option><option>Decisão</option><option>Prompt Claude</option></select></div>
+          <div class="field" style="grid-column:span 2"><label>Status</label><select class="select" id="f-status"><option>Não concluído</option><option>Em andamento</option><option>Concluído</option><option>Em espera</option></select></div>
+          <div class="field" style="grid-column:span 1"><label>Prior.</label><select class="select" id="f-priority"><option>Alta</option><option>Média</option><option>Baixa</option></select></div>
+          <div class="field" style="grid-column:span 2"><label>Prazo</label><input class="input" type="date" id="f-due" /></div>
+          <div class="field" style="grid-column:span 12"><label>Descrição / raciocínio</label><textarea class="textarea" id="f-desc" placeholder="Registre a ideia, correção, motivo, impacto esperado ou instrução para o Claude..."></textarea></div>
+          <div class="field" style="grid-column:span 3"><label>Termômetro de avanço (%)</label><input class="input" type="number" min="0" max="100" id="f-progress" value="0" /></div>
+          <div class="field" style="grid-column:span 3"><label>Tempo estimado (h)</label><input class="input" type="number" min="0" step="0.5" id="f-est" placeholder="Ex.: 2" /></div>
+          <div class="field" style="grid-column:span 3"><label>Tempo dedicado (h)</label><input class="input" type="number" min="0" step="0.25" id="f-spent" placeholder="Ex.: 1.5" /></div>
+          <div class="field" style="grid-column:span 3"><label>Área do sistema</label><select class="select" id="f-area"><option>Dashboard Dev</option><option>OFFREADY Operacional</option><option>Relatórios</option><option>LocalStorage / Banco</option><option>Claude / Prompts</option><option>Apresentação</option><option>Arquitetura futura</option></select></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel focus-timer">
+      <div class="ph"><div class="pt"><span class="num">2</span>Sistema Comodoro / Bloco de produtividade</div></div>
+      <div class="pb timer">
+        <div class="timerbox"><div class="mode" id="timer-mode">Foco OFFREADY</div><div class="time" id="timer-time">25:00</div><div class="actions" style="justify-content:center;margin-top:12px"><button class="btn primary" onclick="startTimer()">Iniciar</button><button class="btn" onclick="pauseTimer()">Pausar</button><button class="btn" onclick="resetTimer()">Reset</button></div></div>
+        <div>
+          <div class="field"><label>Registrar bloco em qual demanda?</label><select class="select" id="timer-entry"></select></div>
+          <div class="field" style="margin-top:8px"><label>Observação do bloco</label><input class="input" id="timer-note" placeholder="Ex.: organizei a lógica do banco local" /></div>
+          <button class="btn green full" style="margin-top:10px" onclick="saveFocusBlock()">Registrar bloco de foco</button>
+          <div style="font-size:11px;color:var(--muted);line-height:1.55;margin-top:10px">Use como um bloco de alta performance: escolha a demanda, rode o foco, registre o que evoluiu e alimente o banco.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="grid dev-grid-review" style="margin-top:14px">
+    <section class="panel demand-db">
+      <div class="ph"><div class="pt"><span class="num">3</span>Banco de demandas</div><div class="actions"><button class="btn" onclick="exportDB()">Exportar JSON</button><label class="btn">Importar JSON<input type="file" id="import-file" accept="application/json" style="display:none" onchange="importDB(event)"></label><button class="btn red" onclick="resetDB()">Zerar banco</button></div></div>
+      <div class="pb">
+        <div class="tabs" id="filters"></div>
+        <div class="task-list" id="task-list"></div>
+      </div>
+    </section>
+
+    <section class="panel process-thermo dev-secondary">
+      <div class="ph"><div class="pt"><span class="num">4</span>Termômetro do processo</div></div>
+      <div class="pb">
+        <div class="progress-ring" id="ring"><div class="ring-inner"><div class="ring-v" id="ring-v">0%</div><div class="ring-l">avanço médio</div></div></div>
+        <div style="margin-top:16px;display:grid;gap:9px" id="type-bars"></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel kanban-panel dev-secondary" style="margin-top:14px">
+    <div class="ph"><div class="pt"><span class="num">5</span>Kanban visual do desenvolvimento</div></div>
+    <div class="pb"><div class="kanban"><div class="col"><div class="colh">Não concluído <span id="c-new">0</span></div><div class="colb" id="kan-new"></div></div><div class="col"><div class="colh">Em andamento <span id="c-doing">0</span></div><div class="colb" id="kan-doing"></div></div><div class="col"><div class="colh">Concluído <span id="c-done">0</span></div><div class="colb" id="kan-done"></div></div></div></div>
+  </section>
+
+  <div class="grid dev-grid-output" style="margin-top:14px">
+    <section class="panel logs-panel dev-secondary">
+      <div class="ph"><div class="pt"><span class="num">6</span>Histórico de blocos e registros</div></div>
+      <div class="pb"><div class="log-list" id="log-list"></div></div>
+    </section>
+    <section class="panel report-panel">
+      <div class="ph"><div class="pt"><span class="num">7</span>Relatório para colar no ChatGPT</div><div class="actions"><button class="btn primary" onclick="generateReport()">Gerar relatório</button><button class="btn green" onclick="copyReport()">Copiar</button></div></div>
+      <div class="pb"><textarea class="textarea report" id="chat-report" placeholder="Clique em Gerar relatório para criar uma mensagem de sincronização..."></textarea></div>
+    </section>
+  </div>
+
+  <div class="footer"><div><span class="dot"></span> Banco local ativo: <b>OFFREADY_DEV_CONTROL_DB</b></div><div>Alta performance é transformar ideia solta em demanda registrada, executada e sincronizada.</div></div>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+var DB_KEY='OFFREADY_DEV_CONTROL_DB';
+var SUPABASE_CFG_KEY='OFFREADY_DEV_SUPABASE_CONFIG';
+var CLOUD_SYNCING=false;
+var db={entries:[],logs:[],meta:{createdAt:new Date().toISOString(),version:'2.1-supabase-ready'}};
+var editingId=null, currentFilter='Todos';
+var timer={seconds:1500,left:1500,running:false,handle:null};
+function uid(){return 'id_'+Date.now()+'_'+Math.random().toString(16).slice(2)}
+function today(){return new Date().toISOString().slice(0,10)}
+function toISODate(v){
+ if(!v)return null;
+ var s=String(v).trim();
+ if(/^\d{4}-\d{2}-\d{2}$/.test(s))return s;
+ var m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+ if(m){return m[3]+'-'+String(m[2]).padStart(2,'0')+'-'+String(m[1]).padStart(2,'0')}
+ var d=new Date(s);
+ if(!isNaN(d.getTime()))return d.toISOString().slice(0,10);
+ return null;
+}
+function fmtLogDate(v){
+ var iso=toISODate(v);
+ if(!iso)return v||'';
+ var a=iso.split('-');
+ return a[2]+'/'+a[1]+'/'+a[0];
+}
+function nowTime(){return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
+function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1800)}
+function loadDB(){try{var raw=localStorage.getItem(DB_KEY);if(raw){db=JSON.parse(raw)}}catch(e){console.error(e)} seedIfEmpty(); renderAll()}
+function saveDB(options){options=options||{};localStorage.setItem(DB_KEY,JSON.stringify(db));if(!options.skipCloud){scheduleCloudSync();}}
+function getSupabaseConfig(){try{return JSON.parse(localStorage.getItem(SUPABASE_CFG_KEY)||'{}')}catch(e){return {}}}
+function setCloudStatus(text,cls){var el=document.getElementById('cloud-status');if(!el)return;el.textContent=text;el.className='cloud-status '+(cls||'warn')}
+function supaErrText(e){if(!e)return 'Erro desconhecido';return (e.code?'code: '+e.code+'\n':'')+(e.message?'message: '+e.message+'\n':'')+(e.details?'details: '+e.details+'\n':'')+(e.hint?'hint: '+e.hint:'')}
+function showSupaError(e){console.error(e);alert('Erro Supabase:\n\n'+supaErrText(e))}
+function initSupabaseFields(){var cfg=getSupabaseConfig();var u=document.getElementById('sb-url'),k=document.getElementById('sb-key'),t=document.getElementById('sb-table');if(u)u.value=cfg.url||'';if(k)k.value=cfg.key||'';if(t)t.value=cfg.table||'offready_dev_entries';updateCloudStatus()}
+function updateCloudStatus(){var cfg=getSupabaseConfig();if(cfg.url&&cfg.key){setCloudStatus('Supabase configurado','ok')}else{setCloudStatus('Modo local','warn')}}
+function saveSupabaseConfig(){var cfg={url:val('sb-url').trim(),key:val('sb-key').trim(),table:val('sb-table').trim()||'offready_dev_entries'};if(!cfg.url||!cfg.key){toast('Informe URL e anon/public key.');return}localStorage.setItem(SUPABASE_CFG_KEY,JSON.stringify(cfg));updateCloudStatus();toast('Configuração Supabase salva.')}
+function clearSupabaseConfig(){if(!confirm('Remover a configuração do Supabase deste navegador?'))return;localStorage.removeItem(SUPABASE_CFG_KEY);initSupabaseFields();toast('Configuração removida. Modo local ativo.')}
+var SB_CLIENT_CACHE=null;var SB_CLIENT_SIG='';
+function sbClient(){var cfg=getSupabaseConfig();if(!cfg.url||!cfg.key||!window.supabase)return null;var sig=cfg.url+'|'+cfg.key;if(SB_CLIENT_CACHE&&SB_CLIENT_SIG===sig)return SB_CLIENT_CACHE;SB_CLIENT_SIG=sig;SB_CLIENT_CACHE=window.supabase.createClient(cfg.url,cfg.key,{auth:{persistSession:false,autoRefreshToken:false,detectSessionInUrl:false}});return SB_CLIENT_CACHE}
+function entryRow(e){return {id:String(e.id),title:e.title||'',type:e.type||'Demanda',status:e.status||'Não concluído',priority:e.priority||'Média',due_date:toISODate(e.due),description:e.desc||'',progress:Number(e.progress)||0,estimated_hours:Number(e.est)||0,spent_hours:Number(e.spent)||0,area:e.area||'',created_at:e.createdAt||new Date().toISOString(),updated_at:e.updatedAt||new Date().toISOString()}}
+function logRow(l){return {id:String(l.id),log_date:toISODate(l.date)||today(),log_time:l.time||nowTime(),type:l.kind||'Registro',log_text:l.text||'',hours:Number(l.hours)||0,created_at:l.createdAt||new Date().toISOString()}}
+function rowToEntry(r){return {id:r.id,title:r.title,type:r.type||'Demanda',status:r.status,priority:r.priority,due:r.due_date||'',desc:r.description||'',progress:Number(r.progress)||0,est:Number(r.estimated_hours)||0,spent:Number(r.spent_hours)||0,area:r.area||'',createdAt:r.created_at,updatedAt:r.updated_at}}
+function rowToLog(r){return {id:r.id,date:r.log_date,time:r.log_time||'',kind:r.type||'Registro',text:r.log_text||'',hours:Number(r.hours)||0,createdAt:r.created_at}}
+var cloudTimer=null;
+function scheduleCloudSync(){var cfg=getSupabaseConfig();if(!cfg.url||!cfg.key)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(function(){pushLocalToCloud(true)},800)}
+async function pushLocalToCloud(silent){var client=sbClient();var cfg=getSupabaseConfig();if(!client){if(!silent)toast('Supabase não configurado.');return false}if(CLOUD_SYNCING)return false;CLOUD_SYNCING=true;setCloudStatus('Sincronizando...','warn');try{var entries=db.entries.map(entryRow);var logs=db.logs.map(logRow);if(entries.length){var res=await client.from(cfg.table||'offready_dev_entries').upsert(entries,{onConflict:'id'});if(res.error)throw res.error}if(logs.length){var res2=await client.from('offready_dev_logs').upsert(logs,{onConflict:'id'});if(res2.error)throw res2.error}setCloudStatus('Sincronizado '+nowTime(),'ok');if(!silent)toast('Banco local enviado para Supabase.');return true}catch(e){setCloudStatus('Erro Supabase','err');if(!silent){showSupaError(e);toast('Erro ao sincronizar.')}else{console.error(e)}return false}finally{CLOUD_SYNCING=false}}
+async function loadFromCloud(){var client=sbClient();var cfg=getSupabaseConfig();if(!client){toast('Supabase não configurado.');return}setCloudStatus('Carregando nuvem...','warn');try{var res=await client.from(cfg.table||'offready_dev_entries').select('*');if(res.error)throw res.error;var res2=await client.from('offready_dev_logs').select('*').limit(200);if(res2.error)throw res2.error;var remoteEntries=(res.data||[]).sort(function(a,b){return String(b.updated_at||'').localeCompare(String(a.updated_at||''))}).map(rowToEntry);var remoteLogs=(res2.data||[]).sort(function(a,b){return String(b.created_at||'').localeCompare(String(a.created_at||''))}).map(rowToLog);if(remoteEntries.length){db.entries=remoteEntries}if(remoteLogs.length){db.logs=remoteLogs}saveDB({skipCloud:true});renderAll();setCloudStatus('Nuvem carregada '+nowTime(),'ok');toast('Dados carregados do Supabase.')}catch(e){setCloudStatus('Erro ao carregar','err');showSupaError(e);toast('Erro ao carregar da nuvem.')}}
+async function testSupabaseConnection(){saveSupabaseConfig();var client=sbClient();var cfg=getSupabaseConfig();if(!client)return;setCloudStatus('Testando...','warn');try{var res=await client.from(cfg.table||'offready_dev_entries').select('id').limit(1);if(res.error)throw res.error;setCloudStatus('Conexão OK','ok');toast('Conexão Supabase funcionando.')}catch(e){setCloudStatus('Falha na conexão','err');showSupaError(e);toast('Falha. Confira tabelas, RLS, URL e anon key.')}}
+function seedIfEmpty(){if(db.entries.length)return; db.entries=[
+ {id:uid(),title:'Criar status das demandas com termômetro',type:'Demanda',status:'Em andamento',priority:'Alta',due:'',desc:'Evoluir o dashboard para controlar não concluído, em andamento e concluído, com avanço percentual e leitura visual.',progress:55,est:2,spent:0.5,area:'Dashboard Dev',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+ {id:uid(),title:'Gerar relatório de sincronização para o ChatGPT',type:'Demanda',status:'Concluído',priority:'Alta',due:'',desc:'Criar texto pronto para copiar e colar no chat, mantendo controle do raciocínio do projeto.',progress:100,est:1,spent:1,area:'Claude / Prompts',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
+ {id:uid(),title:'Organizar banco local do desenvolvimento',type:'Ideia',status:'Em andamento',priority:'Média',due:'',desc:'Transformar o dashboard em banco pessoal para demandas, ideias, correções, bugs, decisões e prompts.',progress:70,est:3,spent:1,area:'LocalStorage / Banco',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
+]; db.logs=[{id:uid(),date:today(),time:nowTime(),kind:'Sistema',text:'Banco inicial criado para controle do desenvolvimento OFFREADY.',createdAt:new Date().toISOString()}]; saveDB({skipCloud:true});}
+function clearForm(){editingId=null;['f-title','f-desc','f-due','f-est','f-spent'].forEach(function(id){document.getElementById(id).value='' });document.getElementById('f-progress').value=0;document.getElementById('f-type').value='Demanda';document.getElementById('f-status').value='Não concluído';document.getElementById('f-priority').value='Alta';document.getElementById('f-area').value='Dashboard Dev';}
+function saveEntry(){var title=document.getElementById('f-title').value.trim();if(!title){toast('Dê um título para o registro.');return}var data={title:title,type:val('f-type'),status:val('f-status'),priority:val('f-priority'),due:val('f-due'),desc:val('f-desc'),progress:clamp(parseFloat(val('f-progress'))||0,0,100),est:parseFloat(val('f-est'))||0,spent:parseFloat(val('f-spent'))||0,area:val('f-area'),updatedAt:new Date().toISOString()};
+ if(editingId){var e=db.entries.find(function(x){return x.id===editingId});Object.assign(e,data);db.logs.unshift({id:uid(),date:today(),time:nowTime(),kind:'Edição',text:'Atualizado: '+title});toast('Registro atualizado.')}else{data.id=uid();data.createdAt=new Date().toISOString();db.entries.unshift(data);db.logs.unshift({id:uid(),date:today(),time:nowTime(),kind:'Novo registro',text:title});toast('Registro salvo no banco.')}saveDB();clearForm();renderAll();}
+function val(id){return document.getElementById(id).value}
+function clamp(n,min,max){return Math.max(min,Math.min(max,n))}
+function editEntry(id){var e=db.entries.find(function(x){return x.id===id});if(!e)return;editingId=id;document.getElementById('f-title').value=e.title;document.getElementById('f-type').value=e.type;document.getElementById('f-status').value=e.status;document.getElementById('f-priority').value=e.priority;document.getElementById('f-due').value=e.due||'';document.getElementById('f-desc').value=e.desc||'';document.getElementById('f-progress').value=e.progress||0;document.getElementById('f-est').value=e.est||0;document.getElementById('f-spent').value=e.spent||0;document.getElementById('f-area').value=e.area||'Dashboard Dev';window.scrollTo({top:0,behavior:'smooth'});toast('Registro carregado para edição.');}
+function deleteEntry(id){if(!confirm('Remover este registro do banco?'))return;db.entries=db.entries.filter(function(e){return e.id!==id});db.logs.unshift({id:uid(),date:today(),time:nowTime(),kind:'Remoção',text:'Registro removido do banco.'});saveDB();renderAll();}
+function setStatus(id,status){var e=db.entries.find(function(x){return x.id===id});if(!e)return;e.status=status;e.progress=status==='Concluído'?100:(status==='Em andamento'&&e.progress<10?10:e.progress);e.updatedAt=new Date().toISOString();db.logs.unshift({id:uid(),date:today(),time:nowTime(),kind:'Status',text:e.title+' → '+status});saveDB();renderAll();}
+function setProgress(id,delta){var e=db.entries.find(function(x){return x.id===id});if(!e)return;e.progress=clamp((e.progress||0)+delta,0,100);if(e.progress>=100)e.status='Concluído';else if(e.progress>0&&e.status==='Não concluído')e.status='Em andamento';e.updatedAt=new Date().toISOString();saveDB();renderAll();}
+function filtered(){return currentFilter==='Todos'?db.entries:db.entries.filter(function(e){return e.status===currentFilter || e.type===currentFilter || e.priority===currentFilter})}
+function clsStatus(s){return s==='Concluído'?'p-done':s==='Em andamento'?'p-doing':s==='Em espera'?'p-hold':'p-new'}
+function clsPri(p){return p==='Alta'?'p-high':p==='Média'?'p-mid':'p-low'}
+function renderFilters(){var filters=['Todos','Não concluído','Em andamento','Concluído','Em espera','Demanda','Ideia','Correção','Bug','Alta'];document.getElementById('filters').innerHTML=filters.map(function(f){return '<button class="tab '+(currentFilter===f?'on':'')+'" onclick="currentFilter=\''+f+'\';renderAll()">'+f+'</button>'}).join('')}
+function renderTasks(){
+  var list=document.getElementById('task-list');
+  var arr=filtered();
+  if(!arr.length){list.innerHTML='<div style="color:var(--muted);font-size:12px;padding:16px;text-align:center">Nenhum registro encontrado para este filtro.</div>';return}
+  list.innerHTML=arr.map(function(e){
+    var dot=e.status==='Concluído'?'done':e.status==='Em andamento'?'doing':e.status==='Em espera'?'hold':'';
+    return '<div class="task">'
+      +'<div class="task-top"><div style="min-width:0;flex:1">'
+        +'<div class="task-title">'+esc(e.title)+'</div>'
+        +'<div class="task-id">ID '+String(e.id).slice(-6)+' • criado '+(e.created||'')+'</div>'
+      +'</div><div class="task-toolbar">'
+        +'<button class="btn mini" onclick="editEntry(\''+e.id+'\')">Editar</button>'
+        +'<button class="btn red mini" onclick="deleteEntry(\''+e.id+'\')">Excluir</button>'
+      +'</div></div>'
+      +'<div class="task-desc">'+esc(e.desc||'Sem descrição.')+'</div>'
+      +'<div class="text-meta">'
+        +'<span><i class="status-dot '+dot+'"></i><b>'+e.status+'</b></span>'
+        +'<span>Prioridade: <b>'+e.priority+'</b></span>'
+        +'<span>Tipo: <b>'+e.type+'</b></span>'
+        +'<span>Área: <b>'+(e.area||'—')+'</b></span>'
+        +(e.due?'<span>Prazo: <b>'+fmtDate(e.due)+'</b></span>':'')
+        +'<span>Tempo: <b>'+((Number(e.spent)||0).toFixed(1))+'h</b></span>'
+      +'</div>'
+      +'<div class="thermo"><div class="thermo-l">Avanço</div><div class="bar"><div class="fill" style="width:'+e.progress+'%;background:'+barColor(e.progress)+'"></div></div><div class="thermo-v">'+e.progress+'%</div></div>'
+      +'<div class="mini-actions">'
+        +'<button class="btn mini" onclick="setStatus(\''+e.id+'\',\'Não concluído\')">Não concluído</button>'
+        +'<button class="btn primary mini" onclick="setStatus(\''+e.id+'\',\'Em andamento\')">Em andamento</button>'
+        +'<button class="btn green mini" onclick="setStatus(\''+e.id+'\',\'Concluído\')">Concluído</button>'
+        +'<button class="btn yellow mini" onclick="setProgress(\''+e.id+'\',10)">+10%</button>'
+        +'<button class="btn mini" onclick="setProgress(\''+e.id+'\',-10)">-10%</button>'
+      +'</div></div>'
+  }).join('')
+}
+function barColor(p){if(p>=100)return 'linear-gradient(90deg,var(--green),#81ffb0)'; if(p>=70)return 'linear-gradient(90deg,var(--blue),var(--cyan))'; if(p>=35)return 'linear-gradient(90deg,var(--yellow),var(--orange))'; return 'linear-gradient(90deg,var(--red),var(--orange))'}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function fmtDate(d){if(!d)return '';var p=d.split('-');return p[2]+'/'+p[1]+'/'+p[0]}
+function avgProgress(){if(!db.entries.length)return 0;return Math.round(db.entries.reduce(function(a,e){return a+(Number(e.progress)||0)},0)/db.entries.length)}
+function totalHours(){return db.entries.reduce(function(a,e){return a+(Number(e.spent)||0)},0)+db.logs.reduce(function(a,l){return a+(Number(l.hours)||0)},0)}
+function renderStats(){var active=db.entries.filter(function(e){return e.status!=='Concluído'}).length;var avg=avgProgress();document.getElementById('st-total').textContent=totalHours().toFixed(1)+'h';document.getElementById('st-active').textContent=active;document.getElementById('st-thermo').textContent=avg+'%';document.getElementById('ring-v').textContent=avg+'%';document.getElementById('ring').style.background='conic-gradient(var(--green) '+(avg*3.6)+'deg,#0b1a27 0deg)';}
+function renderTypeBars(){var types=['Demanda','Ideia','Correção','Bug','Decisão','Prompt Claude'];var html=types.map(function(t){var arr=db.entries.filter(function(e){return e.type===t});var avg=arr.length?Math.round(arr.reduce(function(a,e){return a+(e.progress||0)},0)/arr.length):0;return '<div><div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:11px;color:var(--muted);font-weight:800"><span>'+t+'</span><span>'+avg+'% • '+arr.length+'</span></div><div class="bar"><div class="fill" style="width:'+avg+'%;background:'+barColor(avg)+'"></div></div></div>'}).join('');document.getElementById('type-bars').innerHTML=html}
+function renderKanban(){var map={'Não concluído':'kan-new','Em andamento':'kan-doing','Concluído':'kan-done'};Object.values(map).forEach(function(id){document.getElementById(id).innerHTML=''})
+;['Não concluído','Em andamento','Concluído'].forEach(function(st){var arr=db.entries.filter(function(e){return e.status===st});document.getElementById(st==='Não concluído'?'c-new':st==='Em andamento'?'c-doing':'c-done').textContent=arr.length;document.getElementById(map[st]).innerHTML=arr.map(function(e){return '<div class="kcard"><b>'+esc(e.title)+'</b><span>'+e.type+' • '+e.priority+' • '+e.progress+'%</span></div>'}).join('')||'<div style="font-size:12px;color:var(--muted);padding:8px">Sem itens.</div>'})}
+function renderLogs(){document.getElementById('log-list').innerHTML=db.logs.slice(0,40).map(function(l){return '<div class="log"><b>'+esc(l.kind)+' • '+fmtLogDate(l.date)+' '+l.time+(l.hours?' • '+l.hours+'h':'')+'</b><p>'+esc(l.text||'')+'</p></div>'}).join('')||'<div style="color:var(--muted);font-size:13px">Sem registros ainda.</div>'}
+function renderTimerSelect(){var sel=document.getElementById('timer-entry');sel.innerHTML='<option value="">Bloco livre / sem demanda vinculada</option>'+db.entries.filter(function(e){return e.status!=='Concluído'}).map(function(e){return '<option value="'+e.id+'">'+esc(e.title)+'</option>'}).join('')}
+function renderAll(){renderFilters();renderTasks();renderStats();renderTypeBars();renderKanban();renderLogs();renderTimerSelect();}
+function tick(){if(!timer.running)return;timer.left--;if(timer.left<=0){pauseTimer();toast('Bloco de foco concluído. Registre o que avançou.');timer.left=0}renderTimer()}
+function renderTimer(){var m=Math.floor(timer.left/60),s=timer.left%60;document.getElementById('timer-time').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0')}
+function startTimer(){if(timer.running)return;timer.running=true;timer.handle=setInterval(tick,1000);toast('Bloco de foco iniciado.')}
+function pauseTimer(){timer.running=false;if(timer.handle)clearInterval(timer.handle)}
+function resetTimer(){pauseTimer();timer.left=timer.seconds;renderTimer()}
+function saveFocusBlock(){var id=val('timer-entry');var note=val('timer-note').trim()||'Bloco de foco registrado.';var elapsed=(timer.seconds-timer.left)/3600;if(elapsed<=0)elapsed=25/60;var title='Bloco de foco OFFREADY';if(id){var e=db.entries.find(function(x){return x.id===id});if(e){e.spent=(Number(e.spent)||0)+elapsed;if(e.status==='Não concluído')e.status='Em andamento';title=e.title;}}
+db.logs.unshift({id:uid(),date:today(),time:nowTime(),kind:'Comodoro / Foco',text:title+' — '+note,hours:Number(elapsed.toFixed(2))});saveDB();document.getElementById('timer-note').value='';resetTimer();renderAll();toast('Bloco de produtividade salvo.')}
+function generateReport(){var open=db.entries.filter(function(e){return e.status!=='Concluído'});var high=open.filter(function(e){return e.priority==='Alta'});var doing=db.entries.filter(function(e){return e.status==='Em andamento'});var done=db.entries.filter(function(e){return e.status==='Concluído'});var ideas=db.entries.filter(function(e){return e.type==='Ideia'});var next=open.slice().sort(function(a,b){var pa={Alta:0,Média:1,Baixa:2};return (pa[a.priority]||2)-(pa[b.priority]||2) || (b.progress-a.progress)}).slice(0,5);var recent=db.logs.slice(0,6);
+var txt='ATUALIZAÇÃO OFFREADY DEV CONTROL\n\n';txt+='Contexto: este relatório saiu do meu dashboard pessoal de desenvolvimento do OFFREADY. Use como base para manter o controle do projeto nesta conversa.\n\n';txt+='STATUS GERAL\n';txt+='- Termômetro médio do desenvolvimento: '+avgProgress()+'%\n';txt+='- Tempo total registrado: '+totalHours().toFixed(1)+'h\n';txt+='- Demandas abertas: '+open.length+'\n';txt+='- Em andamento: '+doing.length+'\n';txt+='- Concluídas: '+done.length+'\n';txt+='- Ideias registradas: '+ideas.length+'\n\n';txt+='DEMANDAS PRIORITÁRIAS\n'; if(next.length){next.forEach(function(e,i){txt+=(i+1)+'. ['+e.status+' | '+e.priority+' | '+e.progress+'%] '+e.title+' — '+(e.desc||'sem descrição')+'\n'})}else{txt+='- Nenhuma demanda aberta.\n'} txt+='\nREGISTROS RECENTES\n'; if(recent.length){recent.forEach(function(l){txt+='- '+l.date+' '+l.time+' | '+l.kind+': '+l.text+(l.hours?' ('+l.hours+'h)':'')+'\n'})}else{txt+='- Sem registros recentes.\n'} txt+='\nPRÓXIMO PEDIDO PARA O CHATGPT\n';txt+='Com base nesse estado do projeto, me ajude a definir o próximo patch mais seguro, mantendo desenvolvimento incremental, praticidade e organização do banco de dados do OFFREADY.\n';document.getElementById('chat-report').value=txt;toast('Relatório gerado para o chat.')}
+function copyReport(){var r=document.getElementById('chat-report');if(!r.value)generateReport();r.select();document.execCommand('copy');toast('Relatório copiado.')}
+function exportDB(){var blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='OFFREADY_DEV_CONTROL_DB_'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href)}
+function importDB(ev){var file=ev.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(){try{var obj=JSON.parse(reader.result);if(!obj.entries||!obj.logs)throw new Error('Formato inválido');db=obj;saveDB();renderAll();toast('Banco importado.')}catch(e){toast('Arquivo inválido.')}};reader.readAsText(file)}
+function resetDB(){if(!confirm('Zerar todo o banco local deste dashboard?'))return;localStorage.removeItem(DB_KEY);db={entries:[],logs:[],meta:{createdAt:new Date().toISOString(),version:'2.0'}};seedIfEmpty();renderAll();toast('Banco reiniciado.')}
+
+function setViewMode(mode){
+  document.body.classList.remove('view-focus','view-review');
+  if(mode==='focus')document.body.classList.add('view-focus');
+  if(mode==='review')document.body.classList.add('view-review');
+  ['full','focus','review'].forEach(function(m){var b=document.getElementById('view-'+m);if(b)b.classList.toggle('on',m===mode);});
+  localStorage.setItem('OFFREADY_DEV_VIEW_MODE',mode);
+  toast(mode==='focus'?'Modo foco ativado.':mode==='review'?'Modo revisão ativado.':'Visão completa ativada.');
+}
+function restoreViewMode(){setViewMode(localStorage.getItem('OFFREADY_DEV_VIEW_MODE')||'full')}
+
+loadDB();renderTimer();restoreViewMode();initSupabaseFields();setTimeout(function(){var cfg=getSupabaseConfig();if(cfg.url&&cfg.key){loadFromCloud();}},500);
+</script>
+</body>
+</html>
