@@ -47,6 +47,20 @@ body.view-review .main-entry,body.view-review .focus-timer{display:none!importan
 .cloud-mini{font-size:10px;color:var(--muted);margin-top:5px;line-height:1.4}
 @media(max-width:1000px){.cloud-body{grid-template-columns:1fr}.cloud-actions{grid-column:auto}}
 
+
+.delete-modal-overlay{position:fixed;inset:0;background:rgba(2,6,10,.74);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;z-index:999;padding:18px}
+.delete-modal-overlay.show{display:flex}
+.delete-modal{width:min(460px,100%);background:linear-gradient(180deg,#101b28,#08111c);border:1px solid rgba(255,255,255,.12);border-radius:22px;box-shadow:0 26px 70px rgba(0,0,0,.55);padding:22px}
+.delete-modal-badge{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(255,75,92,.28);background:rgba(255,75,92,.08);color:#ff7c89;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;border-radius:999px;padding:7px 10px;margin-bottom:14px}
+.delete-modal h3{font-size:20px;line-height:1.2;margin:0 0 10px;color:#f4fbff}
+.delete-modal p{font-size:13px;line-height:1.6;color:#96aabd;margin:0 0 12px}
+.delete-modal .target{font-size:13px;color:#dff5ff;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);border-radius:13px;padding:11px;margin:12px 0 16px;word-break:break-word}
+.delete-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.delete-modal-actions button{border:0;border-radius:12px;padding:11px 14px;font-size:12px;font-weight:900;cursor:pointer}
+.delete-modal-actions .cancel{background:rgba(255,255,255,.07);color:#dbe8f3;border:1px solid rgba(255,255,255,.12)}
+.delete-modal-actions .danger{background:linear-gradient(135deg,#ff4055,#e86b20);color:#fff}
+.delete-modal-actions button:hover{filter:brightness(1.07)}
+
 </style>
 </head>
 <body>
@@ -180,6 +194,20 @@ body.view-review .main-entry,body.view-review .focus-timer{display:none!importan
   <div class="footer"><div><span class="dot"></span> Banco local ativo: <b>OFFREADY_DEV_CONTROL_DB</b></div><div>Alta performance é transformar ideia solta em demanda registrada, executada e sincronizada.</div></div>
 </div>
 <div class="toast" id="toast"></div>
+
+<div class="delete-modal-overlay" id="delete-modal-overlay" aria-hidden="true">
+  <div class="delete-modal" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+    <div class="delete-modal-badge">Exclusão definitiva</div>
+    <h3 id="delete-modal-title">Excluir também da nuvem?</h3>
+    <p>Essa ação remove a demanda do navegador e também do Supabase, impedindo que ela volte ao atualizar ou carregar os dados da nuvem.</p>
+    <div class="target" id="delete-modal-target">Demanda selecionada</div>
+    <div class="delete-modal-actions">
+      <button class="cancel" type="button" id="delete-modal-cancel">Cancelar</button>
+      <button class="danger" type="button" id="delete-modal-confirm">Excluir definitivo</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 var DB_KEY='OFFREADY_DEV_CONTROL_DB';
@@ -240,7 +268,64 @@ function saveEntry(){var title=document.getElementById('f-title').value.trim();i
 function val(id){return document.getElementById(id).value}
 function clamp(n,min,max){return Math.max(min,Math.min(max,n))}
 function editEntry(id){var e=db.entries.find(function(x){return x.id===id});if(!e)return;editingId=id;document.getElementById('f-title').value=e.title;document.getElementById('f-type').value=e.type;document.getElementById('f-status').value=e.status;document.getElementById('f-priority').value=e.priority;document.getElementById('f-due').value=e.due||'';document.getElementById('f-desc').value=e.desc||'';document.getElementById('f-progress').value=e.progress||0;document.getElementById('f-est').value=e.est||0;document.getElementById('f-spent').value=e.spent||0;document.getElementById('f-area').value=e.area||'Dashboard Dev';window.scrollTo({top:0,behavior:'smooth'});toast('Registro carregado para edição.');}
-function deleteEntry(id){if(!confirm('Remover este registro do banco?'))return;db.entries=db.entries.filter(function(e){return e.id!==id});db.logs.unshift({id:uid(),date:today(),time:nowTime(),kind:'Remoção',text:'Registro removido do banco.'});saveDB();renderAll();}
+function askDeleteDefinitive(entry){
+ return new Promise(function(resolve){
+   var overlay=document.getElementById('delete-modal-overlay');
+   var target=document.getElementById('delete-modal-target');
+   var cancel=document.getElementById('delete-modal-cancel');
+   var confirmBtn=document.getElementById('delete-modal-confirm');
+   if(!overlay||!target||!cancel||!confirmBtn){resolve(window.confirm('Excluir também da nuvem?'));return;}
+   target.textContent=entry && entry.title ? entry.title : 'Demanda selecionada';
+   overlay.classList.add('show');
+   overlay.setAttribute('aria-hidden','false');
+   function close(value){
+     overlay.classList.remove('show');
+     overlay.setAttribute('aria-hidden','true');
+     cancel.removeEventListener('click',onCancel);
+     confirmBtn.removeEventListener('click',onConfirm);
+     overlay.removeEventListener('click',onOverlay);
+     document.removeEventListener('keydown',onKey);
+     resolve(value);
+   }
+   function onCancel(){close(false)}
+   function onConfirm(){close(true)}
+   function onOverlay(ev){if(ev.target===overlay)close(false)}
+   function onKey(ev){if(ev.key==='Escape')close(false)}
+   cancel.addEventListener('click',onCancel);
+   confirmBtn.addEventListener('click',onConfirm);
+   overlay.addEventListener('click',onOverlay);
+   document.addEventListener('keydown',onKey);
+ });
+}
+async function deleteEntry(id){
+ var entry=db.entries.find(function(e){return e.id===id});
+ if(!entry)return;
+ var ok=await askDeleteDefinitive(entry);
+ if(!ok)return;
+ var client=sbClient();
+ var cfg=getSupabaseConfig();
+ if(client){
+   try{
+     setCloudStatus('Excluindo da nuvem...','warn');
+     var res=await client.from(cfg.table||'offready_dev_entries').delete().eq('id',String(id));
+     if(res.error)throw res.error;
+   }catch(e){
+     setCloudStatus('Erro ao excluir','err');
+     showSupaError(e);
+     toast('Não excluí localmente porque falhou na nuvem.');
+     return;
+   }
+ }
+ db.entries=db.entries.filter(function(e){return e.id!==id});
+ db.logs.unshift({id:uid(),date:today(),time:nowTime(),kind:'Exclusão definitiva',text:'Demanda excluída: '+entry.title});
+ saveDB({skipCloud:true});
+ renderAll();
+ if(client){
+   setCloudStatus('Exclusão sincronizada '+nowTime(),'ok');
+   pushLocalToCloud(true);
+ }
+ toast('Demanda excluída definitivamente.');
+}
 function setStatus(id,status){var e=db.entries.find(function(x){return x.id===id});if(!e)return;e.status=status;e.progress=status==='Concluído'?100:(status==='Em andamento'&&e.progress<10?10:e.progress);e.updatedAt=new Date().toISOString();db.logs.unshift({id:uid(),date:today(),time:nowTime(),kind:'Status',text:e.title+' → '+status});saveDB();renderAll();}
 function setProgress(id,delta){var e=db.entries.find(function(x){return x.id===id});if(!e)return;e.progress=clamp((e.progress||0)+delta,0,100);if(e.progress>=100)e.status='Concluído';else if(e.progress>0&&e.status==='Não concluído')e.status='Em andamento';e.updatedAt=new Date().toISOString();saveDB();renderAll();}
 function filtered(){return currentFilter==='Todos'?db.entries:db.entries.filter(function(e){return e.status===currentFilter || e.type===currentFilter || e.priority===currentFilter})}
