@@ -236,7 +236,7 @@ function fmtLogDate(v){
 }
 function nowTime(){return new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show')},1800)}
-function loadDB(){try{var raw=localStorage.getItem(DB_KEY);if(raw){db=JSON.parse(raw)}}catch(e){console.error(e)} seedIfEmpty(); renderAll()}
+function loadDB(){try{var raw=localStorage.getItem(DB_KEY);if(raw){db=JSON.parse(raw)}}catch(e){console.error(e)} renderAll()}
 function saveDB(options){options=options||{};localStorage.setItem(DB_KEY,JSON.stringify(db));if(!options.skipCloud){scheduleCloudSync();}}
 function getSupabaseConfig(){try{return JSON.parse(localStorage.getItem(SUPABASE_CFG_KEY)||'{}')}catch(e){return {}}}
 function setCloudStatus(text,cls){var el=document.getElementById('cloud-status');if(!el)return;el.textContent=text;el.className='cloud-status '+(cls||'warn')}
@@ -257,11 +257,7 @@ function scheduleCloudSync(){var cfg=getSupabaseConfig();if(!cfg.url||!cfg.key)r
 async function pushLocalToCloud(silent){var client=sbClient();var cfg=getSupabaseConfig();if(!client){if(!silent)toast('Supabase não configurado.');return false}if(CLOUD_SYNCING)return false;CLOUD_SYNCING=true;setCloudStatus('Sincronizando...','warn');try{var entries=db.entries.map(entryRow);var logs=db.logs.map(logRow);if(entries.length){var res=await client.from(cfg.table||'offready_dev_entries').upsert(entries,{onConflict:'id'});if(res.error)throw res.error}if(logs.length){var res2=await client.from('offready_dev_logs').upsert(logs,{onConflict:'id'});if(res2.error)throw res2.error}setCloudStatus('Sincronizado '+nowTime(),'ok');if(!silent)toast('Banco local enviado para Supabase.');return true}catch(e){setCloudStatus('Erro Supabase','err');if(!silent){showSupaError(e);toast('Erro ao sincronizar.')}else{console.error(e)}return false}finally{CLOUD_SYNCING=false}}
 async function loadFromCloud(){var client=sbClient();var cfg=getSupabaseConfig();if(!client){toast('Supabase não configurado.');return}setCloudStatus('Carregando nuvem...','warn');try{var res=await client.from(cfg.table||'offready_dev_entries').select('*');if(res.error)throw res.error;var res2=await client.from('offready_dev_logs').select('*').limit(200);if(res2.error)throw res2.error;var remoteEntries=(res.data||[]).sort(function(a,b){return String(b.updated_at||'').localeCompare(String(a.updated_at||''))}).map(rowToEntry);var remoteLogs=(res2.data||[]).sort(function(a,b){return String(b.created_at||'').localeCompare(String(a.created_at||''))}).map(rowToLog);if(remoteEntries.length){db.entries=remoteEntries}if(remoteLogs.length){db.logs=remoteLogs}saveDB({skipCloud:true});renderAll();setCloudStatus('Nuvem carregada '+nowTime(),'ok');toast('Dados carregados do Supabase.')}catch(e){setCloudStatus('Erro ao carregar','err');showSupaError(e);toast('Erro ao carregar da nuvem.')}}
 async function testSupabaseConnection(){saveSupabaseConfig();var client=sbClient();var cfg=getSupabaseConfig();if(!client)return;setCloudStatus('Testando...','warn');try{var res=await client.from(cfg.table||'offready_dev_entries').select('id').limit(1);if(res.error)throw res.error;setCloudStatus('Conexão OK','ok');toast('Conexão Supabase funcionando.')}catch(e){setCloudStatus('Falha na conexão','err');showSupaError(e);toast('Falha. Confira tabelas, RLS, URL e anon key.')}}
-function seedIfEmpty(){if(db.entries.length)return; db.entries=[
- {id:uid(),title:'Criar status das demandas com termômetro',type:'Demanda',status:'Em andamento',priority:'Alta',due:'',desc:'Evoluir o dashboard para controlar não concluído, em andamento e concluído, com avanço percentual e leitura visual.',progress:55,est:2,spent:0.5,area:'Dashboard Dev',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
- {id:uid(),title:'Gerar relatório de sincronização para o ChatGPT',type:'Demanda',status:'Concluído',priority:'Alta',due:'',desc:'Criar texto pronto para copiar e colar no chat, mantendo controle do raciocínio do projeto.',progress:100,est:1,spent:1,area:'Claude / Prompts',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()},
- {id:uid(),title:'Organizar banco local do desenvolvimento',type:'Ideia',status:'Em andamento',priority:'Média',due:'',desc:'Transformar o dashboard em banco pessoal para demandas, ideias, correções, bugs, decisões e prompts.',progress:70,est:3,spent:1,area:'LocalStorage / Banco',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}
-]; db.logs=[{id:uid(),date:today(),time:nowTime(),kind:'Sistema',text:'Banco inicial criado para controle do desenvolvimento OFFREADY.',createdAt:new Date().toISOString()}]; saveDB({skipCloud:true});}
+function seedIfEmpty(){return;}
 function clearForm(){editingId=null;['f-title','f-desc','f-due','f-est','f-spent'].forEach(function(id){document.getElementById(id).value='' });document.getElementById('f-progress').value=0;document.getElementById('f-type').value='Demanda';document.getElementById('f-status').value='Não concluído';document.getElementById('f-priority').value='Alta';document.getElementById('f-area').value='Dashboard Dev';}
 function saveEntry(){var title=document.getElementById('f-title').value.trim();if(!title){toast('Dê um título para o registro.');return}var data={title:title,type:val('f-type'),status:val('f-status'),priority:val('f-priority'),due:val('f-due'),desc:val('f-desc'),progress:clamp(parseFloat(val('f-progress'))||0,0,100),est:parseFloat(val('f-est'))||0,spent:parseFloat(val('f-spent'))||0,area:val('f-area'),updatedAt:new Date().toISOString()};
  if(editingId){var e=db.entries.find(function(x){return x.id===editingId});Object.assign(e,data);db.logs.unshift({id:uid(),date:today(),time:nowTime(),kind:'Edição',text:'Atualizado: '+title});toast('Registro atualizado.')}else{data.id=uid();data.createdAt=new Date().toISOString();db.entries.unshift(data);db.logs.unshift({id:uid(),date:today(),time:nowTime(),kind:'Novo registro',text:title});toast('Registro salvo no banco.')}saveDB();clearForm();renderAll();}
@@ -389,7 +385,31 @@ var txt='ATUALIZAÇÃO OFFREADY DEV CONTROL\n\n';txt+='Contexto: este relatório
 function copyReport(){var r=document.getElementById('chat-report');if(!r.value)generateReport();r.select();document.execCommand('copy');toast('Relatório copiado.')}
 function exportDB(){var blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='OFFREADY_DEV_CONTROL_DB_'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href)}
 function importDB(ev){var file=ev.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(){try{var obj=JSON.parse(reader.result);if(!obj.entries||!obj.logs)throw new Error('Formato inválido');db=obj;saveDB();renderAll();toast('Banco importado.')}catch(e){toast('Arquivo inválido.')}};reader.readAsText(file)}
-function resetDB(){if(!confirm('Zerar todo o banco local deste dashboard?'))return;localStorage.removeItem(DB_KEY);db={entries:[],logs:[],meta:{createdAt:new Date().toISOString(),version:'2.0'}};seedIfEmpty();renderAll();toast('Banco reiniciado.')}
+async function resetDB(){
+ if(!confirm('Zerar todo o banco local e remover também os registros da nuvem, se Supabase estiver configurado?'))return;
+ var client=sbClient();
+ var cfg=getSupabaseConfig();
+ if(client){
+   try{
+     setCloudStatus('Zerando nuvem...','warn');
+     var r1=await client.from(cfg.table||'offready_dev_entries').delete().not('id','is',null);
+     if(r1.error)throw r1.error;
+     var r2=await client.from('offready_dev_logs').delete().not('id','is',null);
+     if(r2.error)throw r2.error;
+     setCloudStatus('Nuvem zerada '+nowTime(),'ok');
+   }catch(e){
+     setCloudStatus('Erro ao zerar nuvem','err');
+     showSupaError(e);
+     toast('Não zerei localmente porque falhou na nuvem.');
+     return;
+   }
+ }
+ localStorage.removeItem(DB_KEY);
+ db={entries:[],logs:[],meta:{createdAt:new Date().toISOString(),version:'2.0'}};
+ saveDB({skipCloud:true});
+ renderAll();
+ toast('Banco zerado. Nenhum exemplo será recriado.');
+}
 
 function setViewMode(mode){
   document.body.classList.remove('view-focus','view-review');
